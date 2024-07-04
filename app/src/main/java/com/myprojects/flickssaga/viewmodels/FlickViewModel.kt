@@ -17,6 +17,10 @@ class FlickViewModel(private val flickRepository: FlickRepository): ViewModel() 
         _flicks.value = flickRepository.getFlicks()
     }
 
+    fun setIsPlaying(id: Int, isPlaying: Boolean) {
+        _flicks.value = flickRepository.setIsPlaying(id, isPlaying)
+    }
+
     fun getFlicksById(id: Int) {
         _currentFlicks.value = flickRepository.getFlicksById(id)
     }
