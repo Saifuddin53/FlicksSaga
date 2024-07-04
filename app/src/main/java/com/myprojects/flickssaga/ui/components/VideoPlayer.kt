@@ -30,9 +30,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun VideoPlayer(
     videoUrl: String,
-    pagerState: PagerState,
-    pager: Int,
-    pauseIconVisibleState: MutableState<Boolean>,
     flickState: MutableState<FlickState>
 ) {
     val context = LocalContext.current
@@ -54,12 +51,8 @@ fun VideoPlayer(
             }
     }
 
-    if (pager == pagerState.currentPage) {
-        exoPlayer.playWhenReady = true
-        exoPlayer.play()
-    } else {
-        exoPlayer.pause()
-    }
+    exoPlayer.playWhenReady = true
+    exoPlayer.play()
 
     exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
@@ -88,18 +81,6 @@ fun VideoPlayer(
                 MATCH_PARENT,
                 MATCH_PARENT
             )
-        }
-    },modifier = Modifier.noRippleClickable {
-        pauseIconVisibleState.value=true
-        exoPlayer.pause()
-        scope.launch {
-            delay(500)
-            if (exoPlayer.isPlaying) {
-                exoPlayer.pause()
-            } else {
-                pauseIconVisibleState.value=false
-                exoPlayer.play()
-            }
         }
     })
 }

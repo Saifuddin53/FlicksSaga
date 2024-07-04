@@ -1,6 +1,7 @@
 package com.myprojects.flickssaga.repositories
 
 import com.myprojects.flickssaga.data.Flick
+import com.myprojects.flickssaga.data.FlickBinaryTree
 
 class FlickRepository {
 
@@ -47,24 +48,22 @@ class FlickRepository {
         )
     )
 
+    val flicksBinaryTree = insertFlicksBinaryTree()
 
-    fun getFlicks(): List<Flick> {
-        return flicks
+    fun insertFlicksBinaryTree(): FlickBinaryTree{
+        val flickBinaryTree = FlickBinaryTree()
+
+        flickBinaryTree.insert(flicks[0])
+        flickBinaryTree.insertToLeft(flicks[0], flicks[1])
+        flickBinaryTree.insertToRight(flicks[0], flicks[2])
+        flickBinaryTree.insertToLeft(flicks[1], flicks[3])
+        flickBinaryTree.insertToRight(flicks[1], flicks[4])
+
+        return flickBinaryTree
     }
 
-    fun getFlicksById(id: Int): Flick {
-        return flicks.get(index = id - 1)
+    fun searchFlick(id: Int): Flick? {
+        return flicksBinaryTree.search(id)
     }
-
-    fun setIsPlaying(id: Int, isPlaying: Boolean): List<Flick> {
-        return flicks.onEachIndexed() { index, it ->
-            if (index == id) {
-                it.isPlaying = isPlaying
-            } else {
-                it.isPlaying = false
-            }
-        }
-    }
-
 
 }

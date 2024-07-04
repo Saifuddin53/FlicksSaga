@@ -2,6 +2,7 @@
 
 package com.myprojects.flickssaga.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ import com.myprojects.flickssaga.viewmodels.FlickViewModel
 import kotlinx.coroutines.delay
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.FlickState
+import com.myprojects.flickssaga.data.FlickState.Changed.currentFlick
 
 @Composable
 fun FlicksScreen() {
@@ -44,49 +47,42 @@ fun FlicksScreen(
     viewModel: FlickViewModel,
     clickItemPosition: Int = 0,
 ) {
+    val context = LocalContext.current
 
     val flicks by viewModel.flicks.collectAsState()
+    val currentFlick: MutableState<Flick> = remember {
+        mutableStateOf(flicks.root!!)
+    }
 
     val flickStateMutable: MutableState<FlickState> = remember {
         mutableStateOf(FlickState.Ready)
     }
-    val pagerState: PagerState = run {
-        remember {
-            PagerState(clickItemPosition, 0, flicks.size - 1)
-        }
-    }
+
     val initialLayout = remember {
         mutableStateOf(true)
     }
-    val pauseIconVisibleState = remember {
-        mutableStateOf(false)
-    }
 
-    when(flickStateMutable.value) {
+    when (flickStateMutable.value) {
         is FlickState.Idle -> {}
         is FlickState.Buffering -> {}
         is FlickState.Ready, FlickState.Ended -> {
-            Pager(
-                state = pagerState,
-                orientation = Orientation.Vertical,
-                offscreenLimit = 1
-            ) {
-                pauseIconVisibleState.value = false
-                SingleVideoItemContent(
-                    flicks[page],
-                    pagerState,
-                    page,
-                    initialLayout,
-                    pauseIconVisibleState,
-                    flickStateMutable
-                )
-            }
+            SingleVideoItemContent(
+                currentFlick,
+                flickStateMutable
+            )
 
             LaunchedEffect(clickItemPosition) {
                 delay(300)
                 initialLayout.value = false
             }
         }
+
+        is FlickState.Changed -> {
+            currentFlick.value = FlickState.Changed.currentFlick!!
+            flickStateMutable.value = FlickState.Ready
+            Toast.makeText(context, "Changed to ${currentFlick}", Toast.LENGTH_SHORT).show()
+        }
+
         is FlickState.Error -> {}
         else -> {}
     }
@@ -94,28 +90,15 @@ fun FlicksScreen(
 
 @Composable
 private fun SingleVideoItemContent(
-    flick: Flick,
-    pagerState: PagerState,
-    pager: Int,
-    initialLayout: MutableState<Boolean>,
-    pauseIconVisibleState: MutableState<Boolean>,
+    flick: MutableState<Flick>,
     flickState: MutableState<FlickState>
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        VideoPlayer(flick.videoUrl, pagerState, pager, pauseIconVisibleState, flickState)
-        FlickHeader(flick)
-        Box(modifier = Modifier.align(Alignment.BottomStart)) {
-        }
-        if (initialLayout.value) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Black)
-            )
-        }
+        VideoPlayer(flick.value.videoUrl, flickState)
+        FlickHeader(flick.value)
 
-        if(flickState.value == FlickState.Ended) {
-            NextScreenQuestion()
+        if (flickState.value == FlickState.Ended) {
+            NextScreenQuestion(flick.value, flickState)
         }
     }
 }
@@ -130,7 +113,7 @@ fun FlickHeader(flick: Flick) {
             .padding(vertical = 40.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
-    ){
+    ) {
         Text(
             text = flick.title,
             color = Color.White,

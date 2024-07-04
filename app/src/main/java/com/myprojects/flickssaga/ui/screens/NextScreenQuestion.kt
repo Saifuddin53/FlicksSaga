@@ -18,11 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.myprojects.flickssaga.data.Flick
 import com.myprojects.flickssaga.data.FlickState
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
 
 @Composable
 fun NextScreenQuestion(
+    currentFlick: Flick,
+    flickState: MutableState<FlickState>
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -39,36 +42,42 @@ fun NextScreenQuestion(
                color = Color.White,
                modifier = Modifier.padding(vertical = 30.dp)
            )
-            Button(
-                onClick = {
-
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.LightGray,
-                    contentColor = Color.White
-                ),
+            if(currentFlick.leftFlick != null) {
+                Button(
+                    onClick = {
+                        FlickState.Changed.currentFlick = currentFlick.leftFlick
+                        flickState.value = FlickState.Changed
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray,
+                        contentColor = Color.White
+                    ),
                 ) {
-                Text(
-                    text = "Option 1",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                    Text(
+                        text = currentFlick.leftFlick?.title ?: "",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-            Button(
-                onClick = {
-
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.LightGray,
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(vertical = 20.dp)
-            ) {
-                Text(
-                    text = "Option 2",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+            if(currentFlick.rightFlick != null) {
+                Button(
+                    onClick = {
+                        FlickState.Changed.currentFlick = currentFlick.rightFlick
+                        flickState.value = FlickState.Changed
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.LightGray,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(vertical = 20.dp)
+                ) {
+                    Text(
+                        text = currentFlick.rightFlick?.title ?: "",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

@@ -7,6 +7,8 @@ data class Flick(
     val title: String,
     val description: String,
     var isPlaying: Boolean,
+    var leftFlick: Flick? = null,
+    var rightFlick: Flick? = null
 )
 
 

@@ -7,9 +7,6 @@ sealed class FlickState {
     object Ended : FlickState()
     object Changed: FlickState() {
         var currentFlick: Flick? = null
-        fun setFlick(flick: Flick) {
-            currentFlick = flick
-        }
     }
     data class Error(val message: String) : FlickState()
 }
