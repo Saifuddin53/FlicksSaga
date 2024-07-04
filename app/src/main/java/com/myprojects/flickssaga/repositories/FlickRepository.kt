@@ -3,6 +3,7 @@ package com.myprojects.flickssaga.repositories
 import com.myprojects.flickssaga.data.Flick
 
 class FlickRepository {
+
     private val flicks = mutableListOf<Flick>(
         Flick(
             id = 1,
@@ -46,6 +47,7 @@ class FlickRepository {
         )
     )
 
+
     fun getFlicks(): List<Flick> {
         return flicks
     }
@@ -56,11 +58,13 @@ class FlickRepository {
 
     fun setIsPlaying(id: Int, isPlaying: Boolean): List<Flick> {
         return flicks.onEachIndexed() { index, it ->
-            if ( index == id) {
+            if (index == id) {
                 it.isPlaying = isPlaying
-            }else {
+            } else {
                 it.isPlaying = false
             }
         }
     }
+
+
 }

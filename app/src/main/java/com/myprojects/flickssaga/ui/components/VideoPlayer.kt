@@ -2,6 +2,7 @@ package com.myprojects.flickssaga.ui.components
 
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -21,6 +22,7 @@ import androidx.media3.datasource.DefaultDataSourceFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
+import com.myprojects.flickssaga.data.FlickState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,7 @@ fun VideoPlayer(
     pagerState: PagerState,
     pager: Int,
     pauseIconVisibleState: MutableState<Boolean>,
+    flickState: MutableState<FlickState>
 ) {
     val context = LocalContext.current
     val scope= rememberCoroutineScope()
@@ -59,7 +62,15 @@ fun VideoPlayer(
     }
 
     exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+    exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
+
+    exoPlayer.addListener(object: Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (playbackState == Player.STATE_ENDED) {
+                flickState.value = FlickState.Ended
+            }
+        }
+    })
 
     DisposableEffect(Unit) {
         onDispose {
@@ -73,7 +84,6 @@ fun VideoPlayer(
             useController = false
             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
             player = exoPlayer
-
             layoutParams = ViewGroup.LayoutParams(
                 MATCH_PARENT,
                 MATCH_PARENT

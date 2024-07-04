@@ -6,7 +6,8 @@ data class Flick(
     val tags: List<String>,
     val title: String,
     val description: String,
-    var isPlaying: Boolean
+    var isPlaying: Boolean,
 )
+
 
 
