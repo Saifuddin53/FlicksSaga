@@ -51,7 +51,10 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.navigation.runtime.ktx)
     val paging_version = "3.3.0"
+
+    val nav_version = "2.7.7"
 
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
@@ -67,6 +70,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("androidx.navigation:navigation-ui:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     // Coil for image loading
     implementation(libs.coil.compose)
