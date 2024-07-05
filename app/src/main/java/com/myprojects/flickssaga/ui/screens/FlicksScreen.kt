@@ -37,12 +37,6 @@ import com.myprojects.flickssaga.data.FlickState
 import com.myprojects.flickssaga.data.FlickState.Changed.currentFlick
 
 @Composable
-fun FlicksScreen() {
-    val viewModel = FlickViewModel(FlickRepository())
-    FlicksScreen(viewModel = viewModel)
-}
-
-@Composable
 fun FlicksScreen(
     viewModel: FlickViewModel,
     clickItemPosition: Int = 0,
