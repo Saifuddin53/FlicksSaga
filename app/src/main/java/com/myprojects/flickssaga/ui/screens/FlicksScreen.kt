@@ -88,7 +88,7 @@ private fun SingleVideoItemContent(
     flickState: MutableState<FlickState>
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        VideoPlayer(flick.value.videoUrl, flickState)
+        flick.value.videoUrl?.let { VideoPlayer(it, flickState) }
         FlickHeader(flick.value)
 
         if (flickState.value == FlickState.Ended) {
@@ -108,13 +108,15 @@ fun FlickHeader(flick: Flick) {
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(
-            text = flick.title,
-            color = Color.White,
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 15.dp)
-        )
+        flick.title?.let {
+            Text(
+                text = it,
+                color = Color.White,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 15.dp)
+            )
+        }
         Icon(
             painter = painterResource(id = R.drawable.ic_outlined_camera),
             contentDescription = null,

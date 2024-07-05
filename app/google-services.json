@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "930245310871",
+    "project_id": "flickssaga",
+    "storage_bucket": "flickssaga.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930245310871:android:7fb0c8071992ca49a32cd2",
+        "android_client_info": {
+          "package_name": "com.myprojects.flickssaga"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJY9x1NZ37IUbUVVRRVnu54_z9bPJSks0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
