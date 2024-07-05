@@ -1,5 +1,7 @@
 package com.myprojects.flickssaga.data
 
+import android.util.Log
+
 class FlickBinaryTree {
     var root: Flick? = null
 
@@ -15,6 +17,7 @@ class FlickBinaryTree {
     fun insertToLeft(parent: Flick, flick: Flick) {
         if (parent.leftFlick == null) {
             parent.leftFlick = flick
+            flick.previous = parent
         } else {
             throw IllegalArgumentException("Left child already exists for this Flick")
         }
@@ -24,6 +27,7 @@ class FlickBinaryTree {
     fun insertToRight(parent: Flick, flick: Flick) {
         if (parent.rightFlick == null) {
             parent.rightFlick = flick
+            flick.previous = parent
         } else {
             throw IllegalArgumentException("Right child already exists for this Flick")
         }

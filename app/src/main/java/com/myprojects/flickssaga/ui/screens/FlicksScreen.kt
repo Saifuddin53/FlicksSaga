@@ -80,7 +80,7 @@ fun FlicksScreen(
         is FlickState.Changed -> {
             currentFlick.value = FlickState.Changed.currentFlick!!
             flickStateMutable.value = FlickState.Ready
-            Toast.makeText(context, "Changed to ${currentFlick}", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "Changed to ${currentFlick}", Toast.LENGTH_SHORT).show()
         }
 
         is FlickState.Error -> {}
