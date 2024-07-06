@@ -1,5 +1,6 @@
 package com.myprojects.flickssaga.ui.components
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -11,9 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myprojects.flickssaga.data.Flick
+import com.myprojects.flickssaga.data.UploadStates
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
 import kotlinx.coroutines.launch
 
@@ -24,9 +29,9 @@ fun FlickDetailsModal(
     flickViewModel: FlickViewModel,
     showBottomSheet: MutableState<Boolean>,
     id: MutableState<Int>,
-
+    uploadStates: MutableState<UploadStates>
 ) {
-    id.value += 1
+    val context = LocalContext.current
     val newFlick = Flick(id.value)
     val currentFlicks = flickViewModel.currentFlicks.collectAsState()
 
@@ -78,25 +83,33 @@ fun FlickDetailsModal(
                             newFlick.description = description.value
                             newFlick.thumbnailUrl = videoUrlString.value?.let {
                                 flickViewModel.getVideoThumbnail(
-                                    it
+                                    context,
+                                    it.toUri()
                                 )
                             }
 
+                            id.value += 1
+                            newFlick.id = id.value
                             if(id.value == 1) {
                                 flickViewModel.insertRoot(newFlick)
-                            } else {
                                 if(isLeft.value) {
-                                    flickViewModel.insertToLeft(currentFlicks.value, newFlick)
+                                    id.value += 1
+                                    flickViewModel.insertToLeft(newFlick, Flick(id.value))
                                 }
                                 if(isRight.value) {
-                                    flickViewModel.insertToRight(currentFlicks.value, newFlick)
+                                    id.value += 1
+                                    flickViewModel.insertToRight(newFlick, Flick(id.value))
                                 }
+                            } else {
+
                             }
 
                             scope
                             .launch { sheetState.hide() }
                             .invokeOnCompletion {
                                 if (!sheetState.isVisible) {
+                                    UploadStates.Success.newFlick = newFlick
+                                    uploadStates.value = UploadStates.Success
                                     showBottomSheet.value = false
                                 }
                             }

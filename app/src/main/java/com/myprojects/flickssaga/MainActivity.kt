@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
         when {
             allPermissionsGranted() -> {
                 // Permissions are already granted
-                Toast.makeText(this, "Permissions already granted!", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Permissions already granted!", Toast.LENGTH_SHORT).show()
             }
             shouldShowRequestPermissionRationale() -> {
                 // Show an explanation to the user

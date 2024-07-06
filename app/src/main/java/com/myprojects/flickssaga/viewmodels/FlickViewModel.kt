@@ -5,16 +5,20 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.FileUtils
+import android.os.ParcelFileDescriptor
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myprojects.flickssaga.data.Flick
 import com.myprojects.flickssaga.data.FlickBinaryTree
 import com.myprojects.flickssaga.data.FlickState
+import com.myprojects.flickssaga.data.UploadStates
 import com.myprojects.flickssaga.repositories.FlickRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
 
 class FlickViewModel(private val flickRepository: FlickRepository): ViewModel() {
@@ -23,6 +27,9 @@ class FlickViewModel(private val flickRepository: FlickRepository): ViewModel() 
 
     private val _flickState = MutableStateFlow<FlickState>(FlickState.Ready)
     val flickState = _flickState.asStateFlow()
+
+    private val uploadStates = MutableStateFlow<UploadStates>(UploadStates.Idle)
+    val uploadState = uploadStates.asStateFlow()
 
     private val _currentFlicks = MutableStateFlow<Flick>(flickRepository.flicksBinaryTree.root!!)
     val currentFlicks = _currentFlicks.asStateFlow()
@@ -49,26 +56,40 @@ class FlickViewModel(private val flickRepository: FlickRepository): ViewModel() 
         _currentFlicks.value.videoUrl = uri.toString()
     }
 
-    fun uploadThumbnail() {
-        _currentFlicks.value = _currentFlicks.value.copy(thumbnailUrl = _currentFlicks.value.videoUrl?.let {
-            getVideoThumbnail(
-                it
-            )
-        })
-    }
+//    fun uploadThumbnail() {
+//        _currentFlicks.value = _currentFlicks.value.copy(thumbnailUrl = _currentFlicks.value.videoUrl?.let {
+//            getVideoThumbnail(
+//                this, it
+//            )
+//        })
+//    }
 
-    fun getVideoThumbnail(videoUrl: String): Bitmap? {
+
+    fun getVideoThumbnail(context: Context, videoUri: Uri): Bitmap? {
         val retriever = MediaMetadataRetriever()
+        var pfd: ParcelFileDescriptor? = null
         return try {
-            retriever.setDataSource(videoUrl, HashMap<String, String>())
-            retriever.frameAtTime
-        } catch (e: Exception) {
+            pfd = context.contentResolver.openFileDescriptor(videoUri, "r")
+            pfd?.fileDescriptor?.let { fd ->
+                retriever.setDataSource(fd)
+                val frame = retriever.getFrameAtTime(1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                frame
+            }
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            null
+        } catch (e: RuntimeException) {
+            e.printStackTrace()
+            null
+        } catch (e: IOException) {
             e.printStackTrace()
             null
         } finally {
+            pfd?.close()
             retriever.release()
         }
     }
+
 
     fun insertRoot(flick: Flick) {
         _flicks.value = flickRepository.insertRoot(flick)
