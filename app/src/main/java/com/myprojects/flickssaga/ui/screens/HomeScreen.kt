@@ -66,7 +66,8 @@ fun HomeScreen() {
         mutableStateOf("")
     }
     Scaffold(floatingActionButton = {
-        ExtendedFloatingActionButton(text = {},
+        ExtendedFloatingActionButton(
+            text = {},
             icon = { Icon(Icons.Filled.Add, contentDescription = "") },
             onClick = {
                 showBottomSheet = true
@@ -75,24 +76,24 @@ fun HomeScreen() {
             modifier = Modifier.padding(bottom = 50.dp)
         )
     }) { contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding))
-        // Screen content
+        Box(modifier = Modifier.padding(contentPadding).fillMaxSize()) {
+            // Screen content
 
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState,
-                modifier = Modifier.fillMaxHeight(0.65f),
-            ) {
-                BottomSheetContent(
-                    username
-                )
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    },
+                    sheetState = sheetState,
+                    modifier = Modifier.fillMaxHeight(0.65f),
+                ) {
+                    BottomSheetContent(
+                        username
+                    )
+                }
             }
         }
     }
-
 }
 
 
@@ -105,25 +106,35 @@ fun BottomSheetContent(
         mutableStateOf(false)
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
+                .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Share post", style = TextStyle(
-                    fontFamily = poppinsFontFamily, fontSize = 20.sp
-                ), color = Color.White, fontWeight = FontWeight.Bold
+                text = "Share post",
+                style = TextStyle(
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 20.sp
+                ),
+                color = Color.White,
+                fontWeight = FontWeight.Bold
             )
             Button(
-                onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent, contentColor = Color.White
-                ), elevation = ButtonDefaults.elevation(
-                    defaultElevation = 0.dp, pressedElevation = 0.dp
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    contentColor = Color.White
+                ),
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 0.dp
                 )
             ) {
                 Icon(
@@ -136,7 +147,7 @@ fun BottomSheetContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 0.dp, end = 0.dp),
+                .padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -144,14 +155,13 @@ fun BottomSheetContent(
                 contentDescription = "Search",
                 Modifier
                     .size(26.dp)
-                    .padding(bottom = 0.dp, top = 7.dp),
+                    .padding(end = 8.dp),
                 tint = Color.Gray
             )
-            BasicTextField(value = username.value,
+            BasicTextField(
+                value = username.value,
                 onValueChange = { username.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 16.dp, 0.dp, 5.dp),
+                modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(
                     fontFamily = poppinsFontFamily,
                     fontSize = 16.sp,
@@ -168,7 +178,8 @@ fun BottomSheetContent(
                     ) {
                         if (username.value.isEmpty()) {
                             Text(
-                                text = "username", style = TextStyle(
+                                text = "username",
+                                style = TextStyle(
                                     fontFamily = poppinsFontFamily,
                                     fontSize = 14.sp,
                                     fontStyle = FontStyle.Italic,
@@ -192,54 +203,59 @@ fun BottomSheetContent(
         Divider(
             color = Color.Gray,
             thickness = 1.dp,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         )
         Text(
-            text = "via Vasukam", style = TextStyle(
-                fontFamily = poppinsFontFamily, fontSize = 14.sp
-            ), color = Color.Gray, modifier = Modifier.padding(start = 16.dp, top = 24.dp)
+            text = "via Vasukam",
+            style = TextStyle(
+                fontFamily = poppinsFontFamily,
+                fontSize = 14.sp
+            ),
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 0.dp, top = 16.dp)
+                .padding(bottom = 8.dp)
         ) {
             items(userList.size) {
                 if(username.value.isEmpty()) {
                     UserItem(user = userList[it], selected)
                     if (it < userList.size - 1) {
-                        Spacer(modifier = Modifier.width(0.dp)) // Spacer with no width, can adjust if needed
+                        Spacer(modifier = Modifier.width(8.dp)) // Added some width to spacer
                     }
                 }else if (userList[it].username.contains(username.value)) {
                     UserItem(user = userList[it], selected)
                     if (it < userList.size - 1) {
-                        Spacer(modifier = Modifier.width(0.dp)) // Spacer with no width, can adjust if needed
+                        Spacer(modifier = Modifier.width(8.dp)) // Added some width to spacer
                     }
                 }
-
             }
         }
         Divider(
             color = Color.Gray,
             thickness = 1.dp,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
-            text = "via", style = TextStyle(
-                fontFamily = poppinsFontFamily, fontSize = 14.sp
-            ), color = Color.Gray, modifier = Modifier.padding(start = 16.dp, top = 12.dp)
+            text = "via",
+            style = TextStyle(
+                fontFamily = poppinsFontFamily,
+                fontSize = 14.sp
+            ),
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 0.dp, top = 16.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(iconIDs.size) {
                 IconItem(icon = iconIDs[it])
-                if (it < userList.size - 1) {
-                    Spacer(modifier = Modifier.width(0.dp)) // Spacer with no width, can adjust if needed
+                if (it < iconIDs.size - 1) {
+                    Spacer(modifier = Modifier.width(8.dp)) // Added some width to spacer
                 }
             }
         }
@@ -247,11 +263,13 @@ fun BottomSheetContent(
 }
 
 @Composable
-fun UserItem(user: User, selected: MutableState<Boolean> ) {
+fun UserItem(user: User, selected: MutableState<Boolean>) {
     selected.value = user.isSelected
 
     Column(
-        modifier = Modifier.padding(start = 16.dp), // Ensure no padding here
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(), // Ensure no padding here
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -264,36 +282,46 @@ fun UserItem(user: User, selected: MutableState<Boolean> ) {
         Text(
             text = user.username,
             style = TextStyle(
-                fontFamily = poppinsFontFamily, fontSize = 14.sp
+                fontFamily = poppinsFontFamily,
+                fontSize = 14.sp
             ),
             color = Color.White,
             fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(top = 8.dp)
         )
         Text(
-            text = user.email, style = TextStyle(
-                fontFamily = poppinsFontFamily, fontSize = 14.sp
-            ), color = Color.White, fontWeight = FontWeight.Normal
+            text = user.email,
+            style = TextStyle(
+                fontFamily = poppinsFontFamily,
+                fontSize = 14.sp
+            ),
+            color = Color.White,
+            fontWeight = FontWeight.Normal
         )
 
-
-        val background = if(!selected.value) Color(0xFF007BFF) else Color.White
-        val contentColor = if(!selected.value) Color.White else Color(0xFF007BFF)
+        val background = if (!selected.value) Color(0xFF007BFF) else Color.White
+        val contentColor = if (!selected.value) Color.White else Color(0xFF007BFF)
         Button(
-            onClick = { selected.value = !selected.value
-                      user.isSelected = !user.isSelected},
+            onClick = {
+                selected.value = !selected.value
+                user.isSelected = !user.isSelected
+            },
             modifier = Modifier
                 .padding(vertical = 4.dp)
                 .widthIn(min = 90.dp),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = background, contentColor = contentColor
+                backgroundColor = background,
+                contentColor = contentColor
             ),
             shape = RoundedCornerShape(20.dp)
         ) {
             Text(
-                text = if(!selected.value) "Send" else "Undo", style = TextStyle(
-                    fontFamily = poppinsFontFamily, fontSize = 12.sp
-                ), fontWeight = FontWeight.Normal
+                text = if (!selected.value) "Send" else "Undo",
+                style = TextStyle(
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 12.sp
+                ),
+                fontWeight = FontWeight.Normal
             )
         }
     }
@@ -302,7 +330,7 @@ fun UserItem(user: User, selected: MutableState<Boolean> ) {
 @Composable
 fun IconItem(icon: Int) {
     Column(
-        modifier = Modifier.padding(start = 16.dp), // Ensure no padding here
+        modifier = Modifier.padding(8.dp), // Ensure no padding here
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -328,7 +356,6 @@ fun IconItem(icon: Int) {
 //    val user = User(1, R.drawable.user, "abc", "@emailId")
 //    UserItem(user)
 //}
-
 
 @Preview
 @Composable
