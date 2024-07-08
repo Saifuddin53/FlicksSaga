@@ -1,15 +1,18 @@
 package com.myprojects.flickssaga.ui.screens
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,36 +71,24 @@ import com.myprojects.flickssaga.ui.components.FlickDetailsModal
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun UploadScreen(
     flickViewModel: FlickViewModel,
 ) {
-    val flicks = flickViewModel.flicks
     val currentFlicks = flickViewModel.currentFlicks.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val uploadStates by flickViewModel.uploadState.collectAsState()
-
-    var uploadStatesMutable = remember { mutableStateOf(uploadStates) }
-    var showBottomSheet = remember { mutableStateOf(false) }
-
     val thumbnail = remember { mutableStateOf(currentFlicks.value.thumbnailUrl) }
-
-    var index = remember {
-        mutableStateOf(0)
-    }
-
+    val index = remember { mutableStateOf(0) }
     val scrollState = rememberScrollState()
-
-    var rows = remember { mutableStateOf(1) }
-
-//    LaunchedEffect(currentFlicks.value.thumbnailUrl) {
-//        thumbnail.value = currentFlicks.value.thumbnailUrl
-//    }
+    val rows = remember { mutableStateOf(1) }
+    val horizontalScrollState = rememberScrollState()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -112,8 +103,7 @@ fun UploadScreen(
                         overflow = TextOverflow.Ellipsis
                     )
                 },
-                navigationIcon = {
-                },
+                navigationIcon = {},
                 actions = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(painter = painterResource(id = R.drawable.icon_preview),
@@ -129,113 +119,115 @@ fun UploadScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(scrollState),
-        ){
-            when(uploadStatesMutable.value) {
+                .verticalScroll(scrollState)
+                .horizontalScroll(horizontalScrollState),
+        ) {
+            when (uploadStates) {
                 is UploadStates.Idle -> {
-                    UploadScreenContent(flicks = currentFlicks.value
-                        , showBottomSheet = showBottomSheet,
-                        thumbnail = thumbnail,
-                        rows = rows
-                    )
-
-
-                    if (showBottomSheet.value) {
-                        FlickDetailsModal(currentFlicks.value, flickViewModel, id = index,  showBottomSheet = showBottomSheet, uploadStates = uploadStatesMutable)
-                    }
-
+                    index.value = 0
+                    UploadScreenView(flickViewModel,index.value)
                 }
                 is UploadStates.Loading -> {
-
+                    // Display loading state if necessary
                 }
                 is UploadStates.Success -> {
                     thumbnail.value = UploadStates.Success.newFlick?.thumbnailUrl
-                    if(UploadStates.Success.newFlick?.rightFlick != null || UploadStates.Success.newFlick?.leftFlick != null) {
+                    if (UploadStates.Success.newFlick?.rightFlick != null || UploadStates.Success.newFlick?.leftFlick != null) {
                         rows.value += 1
                     }
-                    uploadStatesMutable.value = UploadStates.Idle
+                    flickViewModel.resetUploadStateToIdle()
                 }
                 is UploadStates.Error -> {
-
+                    // Handle error state if necessary
                 }
             }
+        }
+    }
+}
+
+@SuppressLint("StateFlowValueCalledInComposition")
+@Composable
+fun UploadScreenView(
+    viewModel: FlickViewModel,
+    index:  Int,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        viewModel.flicks.value.root?.let {
+            UploadScreenContent(it, viewModel, index)
         }
     }
 }
 
 @Composable
 fun UploadScreenContent(
-    flicks: Flick,
-    thumbnail: MutableState<Bitmap?>,
-    showBottomSheet: MutableState<Boolean>,
-    rows: MutableState<Int>
+    flick: Flick,
+    viewModel: FlickViewModel,
+    index: Int
 ) {
+    var rows: Int = 0
 
-    val itemsPerRow = when (rows.value) {
-        1 -> 1
-        2 -> 2
-        3 -> 4
-        4 -> 8
-        else -> 0// Adjust as necessary for higher row counts
+    val size = when(rows) {
+        0 -> 1f
+        1 -> 0.5f
+        2 -> 0.25f
+        3 -> 0.125f
+        else -> 0f
     }
 
     Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            UploadFlickItem(flick = flicks, thumbnail = thumbnail, showBottomSheet = showBottomSheet)
-        }
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        NodeContent(flick, viewModel, index)
 
-    if(rows.value > 1) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(top = 16.dp)
+//                .fillMaxWidth(size)
         ) {
-            for (i in 0 until rows.value) {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    for (j in 0 until itemsPerRow) {
-                        if (i * itemsPerRow + j < itemsPerRow) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(4.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                UploadFlickItem(flick = flicks, thumbnail = thumbnail, showBottomSheet = showBottomSheet)
-                            }
-                        }
-                    }
-                }
-            }
+            flick.leftFlick?.let { UploadScreenContent(it, viewModel,it.id) }
+            flick.rightFlick?.let { UploadScreenContent(it, viewModel,it.id) }
+            rows += 1
         }
     }
 }
 
 @Composable
-fun SingleRowContent(
-    rows: MutableState<Int>
+fun NodeContent(
+    flick: Flick,
+    viewModel: FlickViewModel,
+    index: Int
 ) {
-    Row {
-        for (i in 0 until rows.value) {
-//            UploadFlickItem(flick = , thumbnail = , showBottomSheet = )
-        }
-
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        UploadFlickItem(flick = flick, index = index, viewModel = viewModel)
     }
 }
 
-
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun UploadFlickItem(flick: Flick,
-                    modifier: Modifier = Modifier,
-                    thumbnail: MutableState<Bitmap?>,
-                    showBottomSheet: MutableState<Boolean>) {
+fun UploadFlickItem(
+    flick: Flick,
+    modifier: Modifier = Modifier,
+    index: Int,
+    viewModel: FlickViewModel,
+) {
+    var showBottomSheet = remember { mutableStateOf(false) }
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -245,8 +237,8 @@ fun UploadFlickItem(flick: Flick,
                     .width(120.dp)
                     .padding(8.dp)
             ) {
-                if (thumbnail.value != null) {
-                    val imageBitmap: ImageBitmap = thumbnail.value!!.asImageBitmap()
+                if (flick.thumbnailUrl != null) {
+                    val imageBitmap: ImageBitmap = flick.thumbnailUrl!!.asImageBitmap()
                     Image(
                         bitmap = imageBitmap,
                         contentDescription = null,
@@ -257,22 +249,39 @@ fun UploadFlickItem(flick: Flick,
                     )
                 } else {
                     // Placeholder or error image
-                    Box(modifier = modifier
-                        .fillMaxWidth()
-                        .height(240.dp)
-                        .background(Color.LightGray)) {
-                    }
+                    Box(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .height(240.dp)
+                            .background(Color.LightGray)
+                    )
                 }
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_upload),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .clickable { showBottomSheet.value = true }
-                    )
-
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_upload),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .clickable { showBottomSheet.value = true }
+                )
             }
+
+            Text(
+                text = index.toString(),
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(top = 8.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (showBottomSheet.value) {
+            Toast.makeText(LocalContext.current, flick.toString(), Toast.LENGTH_SHORT).show()
+            FlickDetailsModal(
+                flick = flick,
+                flickViewModel = viewModel,
+                showBottomSheet = showBottomSheet,
+                id = flick.id,
+            )
         }
     }
 }

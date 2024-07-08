@@ -1,5 +1,6 @@
 package com.myprojects.flickssaga.ui.components
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,12 +29,13 @@ fun FlickDetailsModal(
     flick: Flick,
     flickViewModel: FlickViewModel,
     showBottomSheet: MutableState<Boolean>,
-    id: MutableState<Int>,
-    uploadStates: MutableState<UploadStates>
+    id: Int,
 ) {
     val context = LocalContext.current
-    val newFlick = Flick(id.value)
+    val newFlick = Flick(id)
     val currentFlicks = flickViewModel.currentFlicks.collectAsState()
+
+    var id = id
 
     var videoUrlString = remember { mutableStateOf(newFlick.videoUrl) }
     var title = remember { mutableStateOf(newFlick.title) }
@@ -62,64 +64,9 @@ fun FlickDetailsModal(
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(16.dp)
         ) {
-
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,) {
-                Text("Create a Flick"
-                    , fontSize = 20.sp
-                    , color = Color.White)
-
-
-                    Button(
-                        onClick = {
-                            // Save flick details or perform validation
-                            newFlick.videoUrl = videoUrlString.value
-                            newFlick.title = title.value
-                            newFlick.description = description.value
-                            newFlick.thumbnailUrl = videoUrlString.value?.let {
-                                flickViewModel.getVideoThumbnail(
-                                    context,
-                                    it.toUri()
-                                )
-                            }
-
-                            id.value += 1
-                            newFlick.id = id.value
-                            if(id.value == 1) {
-                                flickViewModel.insertRoot(newFlick)
-                                if(isLeft.value) {
-                                    id.value += 1
-                                    flickViewModel.insertToLeft(newFlick, Flick(id.value))
-                                }
-                                if(isRight.value) {
-                                    id.value += 1
-                                    flickViewModel.insertToRight(newFlick, Flick(id.value))
-                                }
-                            } else {
-
-                            }
-
-                            scope
-                            .launch { sheetState.hide() }
-                            .invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    UploadStates.Success.newFlick = newFlick
-                                    uploadStates.value = UploadStates.Success
-                                    showBottomSheet.value = false
-                                }
-                            }
-                        },
-                        modifier = Modifier.padding(top = 16.dp)
-                    ) {
-                        Text("Save")
-                    }
-            }
-
+            Text("Create a Flick", fontSize = 20.sp, color = Color.White)
 
             Button(
                 onClick = {
@@ -131,54 +78,33 @@ fun FlickDetailsModal(
                     text = "Upload video",
                     fontSize = 20.sp,
                     color = Color.White,
-                    modifier = Modifier
-                        .padding(10.dp)
+                    modifier = Modifier.padding(10.dp)
                 )
             }
 
-            Text(
-                text = "Create branch",
-                fontSize = 20.sp,
-                color = Color.White,
-            )
+            Text("Create branch", fontSize = 20.sp, color = Color.White)
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp),
+                modifier = Modifier.fillMaxWidth().padding(start = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = isLeft.value, onCheckedChange = { isLeft.value = !isLeft.value })
-                Text(
-                    text = "Left",
-                    fontSize = 20.sp,
-                    color = Color.White,
-                )
+                Text("Left", fontSize = 20.sp, color = Color.White)
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp),
+                modifier = Modifier.fillMaxWidth().padding(start = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = isRight.value, onCheckedChange = { isRight.value = !isRight.value })
-                Text(
-                    text = "Right",
-                    fontSize = 20.sp,
-                    color = Color.White,
-                )
+                Text("Right", fontSize = 20.sp, color = Color.White)
             }
 
-
-            // Text field for title
             OutlinedTextField(
                 value = title.value ?: "",
                 onValueChange = { title.value = it },
                 label = { Text("Title", color = Color.White) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = Color.White,
                     focusedBorderColor = Color.White,
@@ -186,15 +112,11 @@ fun FlickDetailsModal(
                 )
             )
 
-
-            // Text field for description
             OutlinedTextField(
                 value = description.value ?: "",
                 onValueChange = { description.value = it },
                 label = { Text("Description", color = Color.White) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = Color.White,
                     focusedBorderColor = Color.White,
@@ -202,11 +124,63 @@ fun FlickDetailsModal(
                 )
             )
 
-            // Add more fields as needed
+            Button(
+                onClick = {
+                    newFlick.videoUrl = videoUrlString.value
+                    newFlick.title = title.value
+                    newFlick.description = description.value
+                    newFlick.thumbnailUrl = videoUrlString.value?.let {
+                        flickViewModel.getVideoThumbnail(context, Uri.parse(it))
+                    }
+
+                    if (id == 0) {
+                        Toast.makeText(context, "Root flick created", Toast.LENGTH_SHORT).show()
+                        flickViewModel.insertRoot(newFlick)
+                        if (isLeft.value) {
+                            id += 1
+                            flickViewModel.insertToLeft(newFlick, Flick(id))
+                        }
+                        if (isRight.value) {
+                            id += 1
+                            flickViewModel.insertToRight(newFlick, Flick(id))
+                        }
+                    } else {
+                        val parentFlick = flick.previous
+                        Toast.makeText(context, flick.toString(), Toast.LENGTH_SHORT).show()
+
+                        if(parentFlick?.leftFlick?.id == id) {
+                            parentFlick.leftFlick = newFlick
+                            newFlick.previous = parentFlick
+                        }else if(parentFlick?.rightFlick?.id == flick.id) {
+                            parentFlick.rightFlick = newFlick
+                            newFlick.previous = parentFlick
+                        }
 
 
+                        if (isLeft.value) {
+                            id += 1
+                            flickViewModel.insertToLeft(newFlick, Flick(id))
+                        }
+                        if (isRight.value) {
+                            id += 1
+                            flickViewModel.insertToRight(newFlick, Flick(id))
+                        }
+
+                    }
+
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            UploadStates.Success.newFlick = newFlick
+                            flickViewModel.resetUploadState()
+                            showBottomSheet.value = false
+                        }
+                    }
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Save")
+            }
         }
     }
-
-
 }
+

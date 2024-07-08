@@ -43,7 +43,7 @@ class FlickRepository {
     fun insertFlicksBinaryTree(): FlickBinaryTree{
         val flickBinaryTree = FlickBinaryTree()
 
-        flickBinaryTree.root = Flick(1)
+        flickBinaryTree.root = Flick(0)
 
 //        flickBinaryTree.root = flicks[0]
 //        flickBinaryTree.insertToLeft(flicks[0], flicks[1])

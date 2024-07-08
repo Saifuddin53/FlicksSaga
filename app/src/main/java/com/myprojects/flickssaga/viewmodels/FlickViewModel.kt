@@ -28,8 +28,8 @@ class FlickViewModel(private val flickRepository: FlickRepository): ViewModel() 
     private val _flickState = MutableStateFlow<FlickState>(FlickState.Ready)
     val flickState = _flickState.asStateFlow()
 
-    private val uploadStates = MutableStateFlow<UploadStates>(UploadStates.Idle)
-    val uploadState = uploadStates.asStateFlow()
+    private val _uploadStates = MutableStateFlow<UploadStates>(UploadStates.Idle)
+    val uploadState = _uploadStates.asStateFlow()
 
     private val _currentFlicks = MutableStateFlow<Flick>(flickRepository.flicksBinaryTree.root!!)
     val currentFlicks = _currentFlicks.asStateFlow()
@@ -104,6 +104,18 @@ class FlickViewModel(private val flickRepository: FlickRepository): ViewModel() 
     fun insertToRight(parent: Flick, flick: Flick) {
         _flicks.value = flickRepository.insertToRight(parent, flick)
         _flicksList.value = flickRepository.flicks
+    }
+
+    fun resetUploadState() {
+        viewModelScope.launch {
+            _uploadStates.value = UploadStates.Success
+        }
+    }
+
+    fun resetUploadStateToIdle() {
+        viewModelScope.launch {
+            _uploadStates.value = UploadStates.Idle
+        }
     }
 
 
