@@ -1,5 +1,9 @@
 package com.myprojects.flickssaga.ui.screens
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +29,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -42,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -51,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.myprojects.flickssaga.R
+import com.myprojects.flickssaga.data.AppIconShare
 import com.myprojects.flickssaga.data.User
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 
@@ -76,7 +83,9 @@ fun HomeScreen() {
             modifier = Modifier.padding(bottom = 50.dp)
         )
     }) { contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding).fillMaxSize()) {
+        Box(modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize()) {
             // Screen content
 
             if (showBottomSheet) {
@@ -252,9 +261,9 @@ fun BottomSheetContent(
         LazyRow(
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(iconIDs.size) {
-                IconItem(icon = iconIDs[it])
-                if (it < iconIDs.size - 1) {
+            items(AppIcons.size) {
+                IconItem(appIcon = AppIcons[it])
+                if (it < AppIcons.size - 1) {
                     Spacer(modifier = Modifier.width(8.dp)) // Added some width to spacer
                 }
             }
@@ -328,7 +337,10 @@ fun UserItem(user: User, selected: MutableState<Boolean>) {
 }
 
 @Composable
-fun IconItem(icon: Int) {
+fun IconItem(appIcon: AppIconShare) {
+    val context = LocalContext.current
+    val pm: PackageManager = context.packageManager
+
     Column(
         modifier = Modifier.padding(8.dp), // Ensure no padding here
         horizontalAlignment = Alignment.CenterHorizontally
@@ -340,12 +352,40 @@ fun IconItem(icon: Int) {
                 .padding(16.dp), // Padding inside the circle
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(24.dp)
-            )
+            IconButton(onClick = {
+                try {
+
+                var launchIntent: Intent? = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain" // Use appropriate MIME type
+                    putExtra(Intent.EXTRA_STREAM, appIcon.link)
+                    setPackage(appIcon.packageManager)
+                }
+
+                    val apps = pm.queryIntentActivities(launchIntent!!, PackageManager.MATCH_DEFAULT_ONLY)
+                    val isAppInstalled = apps.any { it.activityInfo.packageName == appIcon.packageManager}
+
+                    if(appIcon.packageManager == "com.whatsapp") {
+                        val uri = Uri.parse("https://wa.me/?text=${Uri.encode(appIcon.link)}")
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        context.startActivity(intent)
+                    }else if (isAppInstalled) {
+                        context.startActivity(launchIntent)
+                    } else {
+                        // App is not installed, redirect to Play Store
+                        val playStoreIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${appIcon.packageManager}"))
+                        context.startActivity(playStoreIntent)
+                    }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } }
+            ) {
+                Icon(
+                    painter = painterResource(id = appIcon.icon),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
@@ -379,10 +419,11 @@ val userList: List<User> = listOf(
     User(1, R.drawable.user, "yz", "@emailId"),
 )
 
-val iconIDs: List<Int> = listOf(
-    R.drawable.instagram,
-    R.drawable.linkedin,
-    R.drawable.whatsapp,
-    R.drawable.icons8_twitterx,
-    R.drawable.more
+val AppIcons: List<AppIconShare> = listOf(
+    AppIconShare(R.drawable.instagram, "com.instagram.android", "https://bond.ownsfare.com/win/pjJTBc5tKQWLvVUa8"),
+    AppIconShare(R.drawable.linkedin, "com.linkedin.android", "https://bond.ownsfare.com/win/pjJTBc5tKQWLvVUa8"),
+    AppIconShare(R.drawable.whatsapp, "com.whatsapp", "https://bond.ownsfare.com/win/pjJTBc5tKQWLvVUa8"),
+    AppIconShare(R.drawable.icons8_twitterx, "com.twitter.android", "https://bond.ownsfare.com/win/pjJTBc5tKQWLvVUa8"),
+    AppIconShare(R.drawable.more, "null", "https://bond.ownsfare.com/win/pjJTBc5tKQWLvVUa8"),
 )
+
