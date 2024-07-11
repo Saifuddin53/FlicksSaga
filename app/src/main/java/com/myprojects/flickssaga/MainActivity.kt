@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = { BottomNavigationBar(navController) }
                 ) { innerpadding ->
-                    NavigationHost(navController, modifier = Modifier.padding(innerpadding))
+                    NavigationHost(navController, modifier = Modifier.padding(innerpadding), this)
                 }
             }
         }

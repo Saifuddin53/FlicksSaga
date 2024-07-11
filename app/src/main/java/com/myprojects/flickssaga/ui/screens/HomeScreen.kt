@@ -30,10 +30,13 @@ import androidx.compose.material.Divider
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.ModalDrawer
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
@@ -59,46 +62,139 @@ import androidx.compose.ui.unit.sp
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.AppIconShare
 import com.myprojects.flickssaga.data.User
+import com.myprojects.flickssaga.ui.components.BackPressHandler
+import com.myprojects.flickssaga.ui.components.Drawer
+import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
+import kotlinx.coroutines.launch
+//
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun HomeScreen() {
+//    val sheetState =
+//        androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    val scope = rememberCoroutineScope()
+//    var showBottomSheet by remember { mutableStateOf(false) }
+//
+//    var username = remember {
+//        mutableStateOf("")
+//    }
+//    Scaffold(floatingActionButton = {
+//        ExtendedFloatingActionButton(
+//            text = {},
+//            icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+//            onClick = {
+//                showBottomSheet = true
+//            },
+//            backgroundColor = Color.White,
+//            modifier = Modifier.padding(bottom = 50.dp)
+//        )
+//    }) { contentPadding ->
+//        Box(modifier = Modifier
+//            .padding(contentPadding)
+//            .fillMaxSize()) {
+//            // Screen content
+//
+//            if (showBottomSheet) {
+//                ModalBottomSheet(
+//                    onDismissRequest = {
+//                        showBottomSheet = false
+//                    },
+//                    sheetState = sheetState,
+//                    modifier = Modifier.fillMaxHeight(0.65f),
+//                ) {
+//                    BottomSheetContent(
+//                        username
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    val sheetState =
-        androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scaffoldState = rememberScaffoldState()
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var username = remember {
         mutableStateOf("")
     }
-    Scaffold(floatingActionButton = {
-        ExtendedFloatingActionButton(
-            text = {},
-            icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-            onClick = {
-                showBottomSheet = true
-            },
-            backgroundColor = Color.White,
-            modifier = Modifier.padding(bottom = 50.dp)
-        )
-    }) { contentPadding ->
-        Box(modifier = Modifier
-            .padding(contentPadding)
-            .fillMaxSize()) {
-            // Screen content
 
-            if (showBottomSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        showBottomSheet = false
+    if (scaffoldState.drawerState.isOpen) {
+        BackPressHandler {
+            scope.launch {
+                scaffoldState.drawerState.close()
+            }
+        }
+    }
+
+    var topBar: @Composable () -> Unit = {
+        TopBar(
+            title = "Home",
+            buttonIcon = Icons.Filled.Menu,
+            onButtonClicked = {
+                scope.launch {
+                    scaffoldState.drawerState.open()
+                }
+            }
+        )
+    }
+
+    ModalDrawer(drawerContent = {
+        Drawer { route ->
+            scope.launch {
+                scaffoldState.drawerState.close()
+            }
+        }
+    }) {
+        Scaffold(
+            topBar = {
+                topBar()
+            },
+            scaffoldState = scaffoldState,
+            drawerContent = {
+                Drawer { route ->
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    text = {},
+                    icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                    onClick = {
+                        showBottomSheet = true
                     },
-                    sheetState = sheetState,
-                    modifier = Modifier.fillMaxHeight(0.65f),
-                ) {
-                    BottomSheetContent(
-                        username
-                    )
+                    backgroundColor = Color.White,
+                    modifier = Modifier.padding(bottom = 50.dp)
+                )
+            },
+            drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
+        ) { innerPadding ->
+//        NavigationHost(navController = navController, viewModel = viewModel)
+
+            Box(modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()) {
+                // Screen content
+
+                if (showBottomSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            showBottomSheet = false
+                        },
+                        sheetState = sheetState,
+                        modifier = Modifier.fillMaxHeight(0.65f),
+                    ) {
+                        BottomSheetContent(
+                            username
+                        )
+                    }
                 }
             }
         }
