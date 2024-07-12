@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -98,19 +99,19 @@ fun Drawer(
             DrawerItem(DrawerItems.Wallet)
             DrawerItem(DrawerItems.Invite)
             DrawerItem(DrawerItems.Settings)
-            DrawerItem(DrawerItems.LogOut)
+            DrawerItem(DrawerItems.LogOut, color = Color.Red)
         }
     }
 }
 
 @Composable
-fun DrawerItem(drawerItems: DrawerItems) {
+fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 14.dp)
-            .clickable(onClick = {  })
+            .clickable(onClick = { })
             .height(40.dp)
             .background(color = Color.Transparent)
 
@@ -118,7 +119,7 @@ fun DrawerItem(drawerItems: DrawerItems) {
         Icon(
             painter = painterResource(id = drawerItems.icon),
             contentDescription = drawerItems.title,
-            tint = Color.White,
+            tint = color,
             modifier = Modifier
                 .height(35.dp)
                 .width(35.dp)
@@ -130,7 +131,7 @@ fun DrawerItem(drawerItems: DrawerItems) {
                 fontFamily = poppinsFontFamily,
                 fontSize = 16.sp
             ),
-            color = Color.White,
+            color = color,
             fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(start = 16.dp)
         )
@@ -151,19 +152,19 @@ sealed class DrawerItems(
     val icon: Int,
     val title: String
 ) {
-    object Incognito : DrawerItems("home", R.drawable.ic_home, "Incognito")
-    object Abilities : DrawerItems("profile", R.drawable.ic_home, "Abilities")
+    object Incognito : DrawerItems("home", R.drawable.smileycross, "Incognito")
+    object Abilities : DrawerItems("profile", R.drawable.icons8_react_native, "Abilities")
     object Analytics : DrawerItems("settings", R.drawable.analytics, "Analytics")
-    object YourActivity : DrawerItems("help", R.drawable.icon_back, "Your activity")
+    object YourActivity : DrawerItems("help", R.drawable.stopwatch, "Your activity")
     object SavedPosts : DrawerItems("logout", R.drawable.save, "Saved Posts")
     object YourGroups : DrawerItems("about", R.drawable.groups, "Your Groups")
     object CloseFriendsList : DrawerItems("feedback", R.drawable.smiley, "Close Friends List")
-    object Questionnaire : DrawerItems("share", R.drawable.chat, "Questionnaire")
+    object Questionnaire : DrawerItems("share", R.drawable.speech_bubble, "Questionnaire")
     object YourEShop : DrawerItems("rate", R.drawable.shop, "Your eShop")
     object Approvals : DrawerItems("more", R.drawable.tick, "Approvals")
     object SendReal : DrawerItems("contact", R.drawable.ic_outlined_camera, "SendReal")
     object Wallet : DrawerItems("privacy", R.drawable.wallet, "Wallet")
-    object Invite : DrawerItems("terms", R.drawable.share, "Invite")
+    object Invite : DrawerItems("terms", R.drawable.baseline_share_24, "Invite")
     object Settings : DrawerItems("logout", R.drawable.settings, "Settings")
-    object LogOut : DrawerItems("logout", R.drawable.settings, "Log Out")
+    object LogOut : DrawerItems("logout", R.drawable.baseline_logout_24, "Log Out")
 }

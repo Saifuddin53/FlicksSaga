@@ -13,6 +13,45 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.myprojects.flickssaga.R
 
+//
+//@Composable
+//fun BottomNavigationBar(navController: NavHostController) {
+//    val items = listOf(
+//        Screen.Home,
+//        Screen.Upload,
+//        Screen.Flicks
+//    )
+//    BottomNavigation(
+//        backgroundColor = MaterialTheme.colors.primary,
+//        contentColor = Color.White
+//    ) {
+//        val navBackStackEntry by navController.currentBackStackEntryAsState()
+//        val currentRoute = navBackStackEntry?.destination?.route
+//        items.forEach { screen ->
+//            BottomNavigationItem(
+//                icon = {
+//                    Icon(
+//                        painter = painterResource(id = screen.icon),
+//                        contentDescription = screen.route
+//                    )
+//                },
+//                label = { Text(screen.title) },
+//                selected = currentRoute == screen.route,
+//                onClick = {
+//                    if (currentRoute != screen.route) {
+//                        navController.navigate(screen.route) {
+//                            popUpTo(navController.graph.startDestinationId) {
+//                                saveState = true
+//                            }
+//                            launchSingleTop = true
+//                            restoreState = true
+//                        }
+//                    }
+//                }
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
@@ -43,7 +82,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
-                            launchSingleTop = true
+                            launchSingleTop = false
                             restoreState = true
                         }
                     }
@@ -52,6 +91,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         }
     }
 }
+
 
 sealed class Screen(val route: String, val title: String, val icon: Int) {
     object Home : Screen("home", "Home", R.drawable.ic_home)

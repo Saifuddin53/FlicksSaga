@@ -26,7 +26,7 @@ fun NavigationHost(
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
             CompositionLocalProvider(LocalBackPressedDispatcher provides context.onBackPressedDispatcher) {
-                HomeScreen()
+                HomeScreen(navController)
             }
         }
         composable(Screen.Upload.route) { UploadScreen(flickViewModel) }

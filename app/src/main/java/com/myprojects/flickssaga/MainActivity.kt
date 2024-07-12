@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
                 Scaffold(
-                    bottomBar = { BottomNavigationBar(navController) }
                 ) { innerpadding ->
                     NavigationHost(navController, modifier = Modifier.padding(innerpadding), this)
                 }

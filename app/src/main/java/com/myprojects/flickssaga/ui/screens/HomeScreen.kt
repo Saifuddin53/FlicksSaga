@@ -3,7 +3,9 @@ package com.myprojects.flickssaga.ui.screens
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.widget.Toast
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,9 +39,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,75 +64,44 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.AppIconShare
 import com.myprojects.flickssaga.data.User
 import com.myprojects.flickssaga.ui.components.BackPressHandler
+import com.myprojects.flickssaga.ui.components.BottomNavigationBar
+import com.myprojects.flickssaga.ui.components.CustomCircularProgressBar
 import com.myprojects.flickssaga.ui.components.Drawer
+import com.myprojects.flickssaga.ui.components.Screen
 import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import kotlinx.coroutines.launch
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun HomeScreen() {
-//    val sheetState =
-//        androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
-//    val scope = rememberCoroutineScope()
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//
-//    var username = remember {
-//        mutableStateOf("")
-//    }
-//    Scaffold(floatingActionButton = {
-//        ExtendedFloatingActionButton(
-//            text = {},
-//            icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-//            onClick = {
-//                showBottomSheet = true
-//            },
-//            backgroundColor = Color.White,
-//            modifier = Modifier.padding(bottom = 50.dp)
-//        )
-//    }) { contentPadding ->
-//        Box(modifier = Modifier
-//            .padding(contentPadding)
-//            .fillMaxSize()) {
-//            // Screen content
-//
-//            if (showBottomSheet) {
-//                ModalBottomSheet(
-//                    onDismissRequest = {
-//                        showBottomSheet = false
-//                    },
-//                    sheetState = sheetState,
-//                    modifier = Modifier.fillMaxHeight(0.65f),
-//                ) {
-//                    BottomSheetContent(
-//                        username
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
-    val scaffoldState = rememberScaffoldState()
+fun HomeScreen(
+    navHostController: NavHostController
+) {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    var progress by remember { mutableStateOf(0f) }
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(durationMillis = 10000, easing = LinearEasing)
+    )
 
     var username = remember {
         mutableStateOf("")
     }
 
-    if (scaffoldState.drawerState.isOpen) {
+    if (drawerState.isOpen) {
         BackPressHandler {
             scope.launch {
-                scaffoldState.drawerState.close()
+                drawerState.close()
             }
         }
     }
@@ -138,16 +112,18 @@ fun HomeScreen() {
             buttonIcon = Icons.Filled.Menu,
             onButtonClicked = {
                 scope.launch {
-                    scaffoldState.drawerState.open()
+                    drawerState.open()
                 }
             }
         )
     }
 
-    ModalDrawer(drawerContent = {
+    ModalDrawer(
+        drawerState = drawerState,
+        drawerContent = {
         Drawer { route ->
             scope.launch {
-                scaffoldState.drawerState.close()
+                drawerState.close()
             }
         }
     }) {
@@ -155,14 +131,14 @@ fun HomeScreen() {
             topBar = {
                 topBar()
             },
-            scaffoldState = scaffoldState,
             drawerContent = {
                 Drawer { route ->
                     scope.launch {
-                        scaffoldState.drawerState.close()
+                        drawerState.close()
                     }
                 }
             },
+            bottomBar = { BottomNavigationBar(navController = navHostController) },
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     text = {},
@@ -174,7 +150,7 @@ fun HomeScreen() {
                     modifier = Modifier.padding(bottom = 50.dp)
                 )
             },
-            drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
+            drawerGesturesEnabled = drawerState.isOpen,
         ) { innerPadding ->
 //        NavigationHost(navController = navController, viewModel = viewModel)
 
@@ -182,6 +158,26 @@ fun HomeScreen() {
                 .padding(innerPadding)
                 .fillMaxSize()) {
                 // Screen content
+
+                LaunchedEffect(Unit) {
+                    progress = 1f // Set progress to 100%
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CustomCircularProgressBar(
+                        progress = animatedProgress,
+                        color = Color.Red,
+                        trackColor = Color.Gray,
+                        strokeWidth = 100f,
+                        showPercentage = false
+                    )
+                }
 
                 if (showBottomSheet) {
                     ModalBottomSheet(
