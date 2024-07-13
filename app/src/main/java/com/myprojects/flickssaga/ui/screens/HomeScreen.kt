@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -13,9 +14,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,10 +44,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material.DrawerValue
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material.rememberDrawerState
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -56,12 +64,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -73,6 +83,8 @@ import com.myprojects.flickssaga.ui.components.BackPressHandler
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.components.CustomCircularProgressBar
 import com.myprojects.flickssaga.ui.components.Drawer
+import com.myprojects.flickssaga.ui.components.DrawerItem
+import com.myprojects.flickssaga.ui.components.DrawerItems
 import com.myprojects.flickssaga.ui.components.Screen
 import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
@@ -80,11 +92,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    navHostController: NavHostController
-) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+fun HomeScreen(navHostController: NavHostController) {
+    val drawerState = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -94,69 +103,79 @@ fun HomeScreen(
         animationSpec = tween(durationMillis = 10000, easing = LinearEasing)
     )
 
-    var username = remember {
-        mutableStateOf("")
-    }
 
-    if (drawerState.isOpen) {
-        BackPressHandler {
-            scope.launch {
-                drawerState.close()
-            }
-        }
-    }
+    var username = remember { mutableStateOf("") }
 
-    var topBar: @Composable () -> Unit = {
+    val scaffoldOffset by animateDpAsState(
+        targetValue = if (drawerState.value) 50.dp else 0.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    val verticalPadding by animateDpAsState(
+        targetValue = if (drawerState.value) 150.dp else 0.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    val topBar: @Composable () -> Unit = {
         TopBar(
             title = "Home",
             buttonIcon = Icons.Filled.Menu,
             onButtonClicked = {
                 scope.launch {
-                    drawerState.open()
+                    drawerState.value = !drawerState.value
                 }
             }
         )
     }
 
-    ModalDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-        Drawer { route ->
-            scope.launch {
-                drawerState.close()
-            }
-        }
-    }) {
-        Scaffold(
-            topBar = {
-                topBar()
-            },
-            drawerContent = {
-                Drawer { route ->
+    Row(
+        modifier = Modifier.background(Color.Black)
+    ) {
+        if (drawerState.value) {
+            Drawer(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(220.dp)
+                    .background(Color.Black),
+                onDestinationClicked = { route ->
                     scope.launch {
-                        drawerState.close()
+                        drawerState.value = false
+                        navHostController.navigate(route)
                     }
                 }
-            },
+            )
+        }
+
+        Scaffold(
+            topBar = { topBar() },
             bottomBar = { BottomNavigationBar(navController = navHostController) },
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     text = {},
-                    icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                    onClick = {
-                        showBottomSheet = true
-                    },
+                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                    onClick = { showBottomSheet = true },
                     backgroundColor = Color.White,
                     modifier = Modifier.padding(bottom = 50.dp)
                 )
             },
-            drawerGesturesEnabled = drawerState.isOpen,
+            modifier = Modifier
+                .fillMaxSize()
+                .offset {
+                    IntOffset(
+                        x = scaffoldOffset.roundToPx(),
+                        y = 0
+                    )
+                }
+                .padding(top = verticalPadding, bottom = verticalPadding)
         ) { innerPadding ->
-//        NavigationHost(navController = navController, viewModel = viewModel)
-
             Box(modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()) {
+                .padding(
+                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + scaffoldOffset,
+                    top = innerPadding.calculateTopPadding() + verticalPadding,
+                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                    bottom = innerPadding.calculateBottomPadding() + verticalPadding
+                )
+            ) {
                 // Screen content
 
                 LaunchedEffect(Unit) {
@@ -181,15 +200,11 @@ fun HomeScreen(
 
                 if (showBottomSheet) {
                     ModalBottomSheet(
-                        onDismissRequest = {
-                            showBottomSheet = false
-                        },
-                        sheetState = sheetState,
+                        onDismissRequest = { showBottomSheet = false },
+                        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                         modifier = Modifier.fillMaxHeight(0.65f),
                     ) {
-                        BottomSheetContent(
-                            username
-                        )
+                        BottomSheetContent(username)
                     }
                 }
             }

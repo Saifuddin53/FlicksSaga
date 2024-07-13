@@ -32,18 +32,17 @@ fun Drawer(
     onDestinationClicked: (route: String) -> Unit
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .verticalScroll(rememberScrollState())
             .background(Color.Black)
             .padding(bottom = 60.dp)
     ) {
         Column(
-            modifier
-                .fillMaxSize()
+            modifier = modifier
         ) {
 
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .height(160.dp)
                     .background(Color.Black),
@@ -60,7 +59,7 @@ fun Drawer(
                         .clip(CircleShape)
                 )
 
-                Column(modifier = modifier) {
+                Column(modifier = Modifier) {
                     Text(
                         text = "Aakash Shukla",
                         style = TextStyle(
@@ -85,6 +84,7 @@ fun Drawer(
                 }
             }
 
+
             DrawerItem(DrawerItems.Incognito)
             DrawerItem(DrawerItems.Abilities)
             DrawerItem(DrawerItems.Analytics)
@@ -98,9 +98,10 @@ fun Drawer(
             DrawerItem(DrawerItems.SendReal)
             DrawerItem(DrawerItems.Wallet)
             DrawerItem(DrawerItems.Invite)
-            DrawerItem(DrawerItems.Settings)
-            DrawerItem(DrawerItems.LogOut, color = Color.Red)
+            DrawerItem(drawerItems = DrawerItems.Settings)
+            DrawerItem(drawerItems = DrawerItems.LogOut, color = Color.Red)
         }
+
     }
 }
 
@@ -110,7 +111,7 @@ fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 14.dp)
+            .padding(start = 12.dp)
             .clickable(onClick = { })
             .height(40.dp)
             .background(color = Color.Transparent)
@@ -123,7 +124,7 @@ fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White) {
             modifier = Modifier
                 .height(35.dp)
                 .width(35.dp)
-                .padding(start = 10.dp)
+                .padding(start = 8.dp)
         )
         Text(
             text = drawerItems.title,
@@ -133,7 +134,7 @@ fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White) {
             ),
             color = color,
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(start = 16.dp)
+            modifier = Modifier.padding(start = 12.dp)
         )
     }
 }
