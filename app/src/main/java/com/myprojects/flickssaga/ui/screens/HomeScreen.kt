@@ -3,10 +3,19 @@ package com.myprojects.flickssaga.ui.screens
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +46,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -107,12 +117,17 @@ fun HomeScreen(navHostController: NavHostController) {
     var username = remember { mutableStateOf("") }
 
     val scaffoldOffset by animateDpAsState(
-        targetValue = if (drawerState.value) 50.dp else 0.dp,
+        targetValue = if (drawerState.value) 40.dp else 0.dp,
         animationSpec = tween(durationMillis = 300)
     )
 
     val verticalPadding by animateDpAsState(
         targetValue = if (drawerState.value) 150.dp else 0.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    val cornerRadius by animateDpAsState(
+        targetValue = if (drawerState.value) 16.dp else 0.dp,
         animationSpec = tween(durationMillis = 300)
     )
 
@@ -132,32 +147,27 @@ fun HomeScreen(navHostController: NavHostController) {
         modifier = Modifier.background(Color.Black)
     ) {
         if (drawerState.value) {
-            Drawer(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(220.dp)
-                    .background(Color.Black),
-                onDestinationClicked = { route ->
-                    scope.launch {
-                        drawerState.value = false
-                        navHostController.navigate(route)
+            AnimatedVisibility(
+                visible = drawerState.value,
+                enter = slideInHorizontally(animationSpec = spring(stiffness = Spring.StiffnessLow), initialOffsetX = { -220 }) + fadeIn() + scaleIn(initialScale = 0.9f),
+                exit = slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessLow), targetOffsetX = { -220 }) + fadeOut() + scaleOut(targetScale = 0.9f)
+            ) {
+                Drawer(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(220.dp)
+                        .background(Color.Black),
+                    onDestinationClicked = { route ->
+                        scope.launch {
+                            drawerState.value = false
+                            navHostController.navigate(route)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
 
-        Scaffold(
-            topBar = { topBar() },
-            bottomBar = { BottomNavigationBar(navController = navHostController) },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    text = {},
-                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    onClick = { showBottomSheet = true },
-                    backgroundColor = Color.White,
-                    modifier = Modifier.padding(bottom = 50.dp)
-                )
-            },
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .offset {
@@ -167,44 +177,61 @@ fun HomeScreen(navHostController: NavHostController) {
                     )
                 }
                 .padding(top = verticalPadding, bottom = verticalPadding)
-        ) { innerPadding ->
-            Box(modifier = Modifier
-                .padding(
-                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + scaffoldOffset,
-                    top = innerPadding.calculateTopPadding() + verticalPadding,
-                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
-                    bottom = innerPadding.calculateBottomPadding() + verticalPadding
-                )
-            ) {
-                // Screen content
-
-                LaunchedEffect(Unit) {
-                    progress = 1f // Set progress to 100%
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CustomCircularProgressBar(
-                        progress = animatedProgress,
-                        color = Color.Red,
-                        trackColor = Color.Gray,
-                        strokeWidth = 100f,
-                        showPercentage = false
+                .clip(RoundedCornerShape(cornerRadius))
+                .background(MaterialTheme.colors.surface)
+        ) {
+            Scaffold(
+                topBar = { topBar() },
+                bottomBar = { BottomNavigationBar(navController = navHostController) },
+                floatingActionButton = {
+                    ExtendedFloatingActionButton(
+                        text = {},
+                        icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                        onClick = { showBottomSheet = true },
+                        backgroundColor = Color.White,
+                        modifier = Modifier.padding(bottom = 50.dp)
                     )
                 }
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .padding(
+                            start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + scaffoldOffset,
+                            top = innerPadding.calculateTopPadding() + verticalPadding,
+                            end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = innerPadding.calculateBottomPadding() + verticalPadding
+                        )
+                ) {
+                    // Screen content
 
-                if (showBottomSheet) {
-                    ModalBottomSheet(
-                        onDismissRequest = { showBottomSheet = false },
-                        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                        modifier = Modifier.fillMaxHeight(0.65f),
+                    LaunchedEffect(Unit) {
+                        progress = 1f // Set progress to 100%
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        BottomSheetContent(username)
+                        CustomCircularProgressBar(
+                            progress = animatedProgress,
+                            color = Color.Red,
+                            trackColor = Color.Gray,
+                            strokeWidth = 100f,
+                            showPercentage = false
+                        )
+                    }
+
+                    if (showBottomSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = { showBottomSheet = false },
+                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                            modifier = Modifier.fillMaxHeight(0.65f),
+                        ) {
+                            BottomSheetContent(username)
+                        }
                     }
                 }
             }
