@@ -29,7 +29,7 @@ fun NavigationHost(
                 HomeScreen(navController)
             }
         }
-        composable(Screen.Upload.route) { UploadScreen(flickViewModel) }
+        composable(Screen.Upload.route) { UploadScreen(flickViewModel, navController) }
         composable(Screen.Flicks.route) { FlicksScreen(flickViewModel) }
     }
 }

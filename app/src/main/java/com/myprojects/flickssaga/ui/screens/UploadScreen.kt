@@ -64,9 +64,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.Flick
 import com.myprojects.flickssaga.data.UploadStates
+import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.components.FlickDetailsModal
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
 import kotlinx.coroutines.launch
@@ -77,6 +79,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun UploadScreen(
     flickViewModel: FlickViewModel,
+    navHostController: NavHostController
 ) {
     val currentFlicks = flickViewModel.currentFlicks.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -113,6 +116,7 @@ fun UploadScreen(
                 scrollBehavior = scrollBehavior,
             )
         },
+        bottomBar = { BottomNavigationBar(navController = navHostController) }
     ) { innerPadding ->
 
         Column(
