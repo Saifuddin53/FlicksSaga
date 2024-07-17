@@ -219,7 +219,7 @@ fun HomeScreen(navHostController: NavHostController) {
                             progress = animatedProgress,
                             color = Color.Red,
                             trackColor = Color.Gray,
-                            strokeWidth = 150f,
+                            strokeWidth = 100f,
                             showPercentage = false
                         )
                     }

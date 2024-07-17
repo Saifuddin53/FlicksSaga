@@ -9,8 +9,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.myprojects.flickssaga.repositories.FlickRepository
+import com.myprojects.flickssaga.ui.components.DrawerItems
 import com.myprojects.flickssaga.ui.components.LocalBackPressedDispatcher
 import com.myprojects.flickssaga.ui.components.Screen
+import com.myprojects.flickssaga.ui.screens.ChatScreen
 import com.myprojects.flickssaga.ui.screens.FlicksScreen
 import com.myprojects.flickssaga.ui.screens.HomeScreen
 import com.myprojects.flickssaga.ui.screens.UploadScreen
@@ -31,5 +33,6 @@ fun NavigationHost(
         }
         composable(Screen.Upload.route) { UploadScreen(flickViewModel, navController) }
         composable(Screen.Flicks.route) { FlicksScreen(flickViewModel) }
+        composable(DrawerItems.Questionnaire.route) { ChatScreen(navController) }
     }
 }

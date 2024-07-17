@@ -92,7 +92,7 @@ fun Drawer(
             DrawerItem(DrawerItems.SavedPosts)
             DrawerItem(DrawerItems.YourGroups)
             DrawerItem(DrawerItems.CloseFriendsList)
-            DrawerItem(DrawerItems.Questionnaire)
+            DrawerItem(DrawerItems.Questionnaire, onDestinationClicked = onDestinationClicked)
             DrawerItem(DrawerItems.YourEShop)
             DrawerItem(DrawerItems.Approvals)
             DrawerItem(DrawerItems.SendReal)
@@ -106,7 +106,7 @@ fun Drawer(
 }
 
 @Composable
-fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White) {
+fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White, onDestinationClicked: (route: String) -> Unit = {}) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -115,7 +115,9 @@ fun DrawerItem(drawerItems: DrawerItems, color: Color = Color.White) {
             .clickable(onClick = { })
             .height(40.dp)
             .background(color = Color.Transparent)
-
+            .clickable {
+                onDestinationClicked(drawerItems.route)
+            }
     ) {
         Icon(
             painter = painterResource(id = drawerItems.icon),
@@ -160,7 +162,7 @@ sealed class DrawerItems(
     object SavedPosts : DrawerItems("logout", R.drawable.save, "Saved Posts")
     object YourGroups : DrawerItems("about", R.drawable.groups, "Your Groups")
     object CloseFriendsList : DrawerItems("feedback", R.drawable.smiley, "Close Friends List")
-    object Questionnaire : DrawerItems("share", R.drawable.speech_bubble, "Questionnaire")
+    object Questionnaire : DrawerItems("chat", R.drawable.speech_bubble, "Questionnaire")
     object YourEShop : DrawerItems("rate", R.drawable.shop, "Your eShop")
     object Approvals : DrawerItems("more", R.drawable.tick, "Approvals")
     object SendReal : DrawerItems("contact", R.drawable.ic_outlined_camera, "SendReal")
