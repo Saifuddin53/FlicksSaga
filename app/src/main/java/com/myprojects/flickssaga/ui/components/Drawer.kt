@@ -5,17 +5,13 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -156,18 +152,19 @@ sealed class DrawerItems(
     val title: String
 ) {
     object Incognito : DrawerItems("home", R.drawable.smileycross, "Incognito")
-    object Abilities : DrawerItems("profile", R.drawable.icons8_react_native, "Abilities")
-    object Analytics : DrawerItems("settings", R.drawable.analytics, "Analytics")
-    object YourActivity : DrawerItems("help", R.drawable.stopwatch, "Your activity")
-    object SavedPosts : DrawerItems("logout", R.drawable.save, "Saved Posts")
-    object YourGroups : DrawerItems("about", R.drawable.groups, "Your Groups")
+    object Abilities : DrawerItems("profile", R.drawable.atom, "Abilities")
+    object Analytics : DrawerItems("settings", R.drawable.chartlines, "Analytics")
+    object YourActivity : DrawerItems("help", R.drawable.timer, "Your activity")
+    object SavedPosts : DrawerItems("logout", R.drawable.bookmarksimple, "Saved Posts")
+    object YourGroups : DrawerItems("about", R.drawable.usersthree, "Your Groups")
     object CloseFriendsList : DrawerItems("feedback", R.drawable.smiley, "Close Friends List")
-    object Questionnaire : DrawerItems("chat", R.drawable.speech_bubble, "Questionnaire")
-    object YourEShop : DrawerItems("rate", R.drawable.shop, "Your eShop")
-    object Approvals : DrawerItems("more", R.drawable.tick, "Approvals")
-    object SendReal : DrawerItems("contact", R.drawable.ic_outlined_camera, "SendReal")
+    object Questionnaire : DrawerItems("chat", R.drawable.chatteardrop, "Questionnaire")
+    object YourEShop : DrawerItems("rate", R.drawable.storefront, "Your eShop")
+    object Approvals : DrawerItems("more", R.drawable.checkcircle, "Approvals")
+    object SendReal : DrawerItems("contact", R.drawable.currencydollarsimple, "SendReal")
     object Wallet : DrawerItems("privacy", R.drawable.wallet, "Wallet")
-    object Invite : DrawerItems("terms", R.drawable.baseline_share_24, "Invite")
-    object Settings : DrawerItems("logout", R.drawable.settings, "Settings")
-    object LogOut : DrawerItems("logout", R.drawable.baseline_logout_24, "Log Out")
+    object Invite : DrawerItems("terms", R.drawable.sharenetwork, "Invite")
+    object Settings : DrawerItems("logout", R.drawable.gear, "Settings")
+    object LogOut : DrawerItems("logout", R.drawable.signout, "Log Out")
 }
+
