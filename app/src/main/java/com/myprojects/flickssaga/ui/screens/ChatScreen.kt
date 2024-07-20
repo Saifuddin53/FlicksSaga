@@ -193,7 +193,7 @@ fun PollContent(){
                         text = "Who's gonna win this Las Vegas GP?",
                         style = TextStyle(
                             fontFamily = poppinsFontFamily,
-                            fontSize = 16.sp
+                            fontSize = 15.sp
                         ),
                         fontWeight = FontWeight.W600,
                         modifier = Modifier.padding(bottom = 16.dp, start = 8.dp)
@@ -228,10 +228,10 @@ fun PollOption(
             text = text,
             style = TextStyle(
                 fontFamily = poppinsFontFamily,
-                fontSize = 14.sp
+                fontSize = 12.sp
             ),
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(10.dp)
         )
     }
 }
@@ -240,5 +240,4 @@ fun PollOption(
 @Composable
 fun PollContentPreview(){
     PollContent()
-
 }
