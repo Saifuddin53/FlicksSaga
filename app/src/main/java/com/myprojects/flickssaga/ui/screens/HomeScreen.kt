@@ -35,11 +35,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
@@ -95,9 +97,12 @@ import com.myprojects.flickssaga.ui.components.CustomCircularProgressBar
 import com.myprojects.flickssaga.ui.components.Drawer
 import com.myprojects.flickssaga.ui.components.DrawerItem
 import com.myprojects.flickssaga.ui.components.DrawerItems
+import com.myprojects.flickssaga.ui.components.PostContent
 import com.myprojects.flickssaga.ui.components.Screen
 import com.myprojects.flickssaga.ui.components.TopBar
+import com.myprojects.flickssaga.ui.components.UploadPost
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
+import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,7 +110,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(navHostController: NavHostController) {
     val drawerState = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet = remember { mutableStateOf(false) }
 
     var progress by remember { mutableStateOf(0f) }
     val animatedProgress by animateFloatAsState(
@@ -113,6 +118,9 @@ fun HomeScreen(navHostController: NavHostController) {
         animationSpec = tween(durationMillis = 10000, easing = LinearEasing)
     )
 
+    val videoPostViewModel = VideoPostViewModel()
+
+    val scrollState = rememberScrollState()
 
     var username = remember { mutableStateOf("") }
 
@@ -133,7 +141,7 @@ fun HomeScreen(navHostController: NavHostController) {
 
     val topBar: @Composable () -> Unit = {
         TopBar(
-            title = "Home",
+            title = "Feed",
             buttonIcon = Icons.Filled.Menu,
             onButtonClicked = {
                 scope.launch {
@@ -187,7 +195,7 @@ fun HomeScreen(navHostController: NavHostController) {
                     ExtendedFloatingActionButton(
                         text = {},
                         icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                        onClick = { showBottomSheet = true },
+                        onClick = { showBottomSheet.value = true },
                         backgroundColor = Color.White,
                         modifier = Modifier.padding(bottom = 50.dp)
                     )
@@ -211,27 +219,24 @@ fun HomeScreen(navHostController: NavHostController) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp),
+                            .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        CustomCircularProgressBar(
-                            progress = animatedProgress,
-                            color = Color.Red,
-                            trackColor = Color.Gray,
-                            strokeWidth = 100f,
-                            showPercentage = false
-                        )
+                        PostContent()
+                        PostContent()
                     }
 
-                    if (showBottomSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = { showBottomSheet = false },
-                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                            modifier = Modifier.fillMaxHeight(0.65f),
-                        ) {
-                            BottomSheetContent(username)
-                        }
+                    if (showBottomSheet.value) {
+//                        ModalBottomSheet(
+//                            onDismissRequest = { showBottomSheet = false },
+//                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+//                            modifier = Modifier.fillMaxHeight(0.65f),
+//                        ) {
+//                            BottomSheetContent(username)
+//                        }
+
+                        UploadPost(videoPostViewModel = videoPostViewModel, showBottomSheet = showBottomSheet)
                     }
                 }
             }
