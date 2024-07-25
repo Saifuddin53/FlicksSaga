@@ -1,6 +1,7 @@
 package com.myprojects.flickssaga.ui.components
 
 import android.app.Activity
+import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -58,7 +59,7 @@ fun UploadPost(
     var videoUri by remember { mutableStateOf<Uri?>(null) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-
+    val postId = videoPostViewModel.postId.collectAsState()
 
     val videoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -130,10 +131,12 @@ fun UploadPost(
 
             Button(
                 onClick = {
+                    imageUri = videoPostViewModel.getVideoThumbnail(context, videoUri!!)
+                        .let { videoPostViewModel.bitmapToFile(context, it, "Thumbnail") }
 
                     if (title.value.isNotEmpty() && description.value.isNotEmpty() && videoUri != null) {
-                        val postId = Random().nextInt(Int.MAX_VALUE)
-                        val post = Post(id = postId, title = title.value, description = description.value, timestamp = System.currentTimeMillis())
+                        videoPostViewModel.incrementPostId()
+                        val post = Post(id = postId.value, title = title.value, description = description.value, timestamp = System.currentTimeMillis())
                         coroutineScope.launch {
                             videoPostViewModel.uploadFilesAndSavePost(videoUri!!, imageUri, post)
                         }
@@ -146,6 +149,7 @@ fun UploadPost(
                             showBottomSheet.value = false
                         }
                     }
+                    Toast.makeText(context, "Post Uploaded Successfully", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.padding(top = 16.dp)
             ) {

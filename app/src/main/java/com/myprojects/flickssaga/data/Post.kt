@@ -1,7 +1,7 @@
 package com.myprojects.flickssaga.data
 
 data class Post(
-    val id: Int,
+    val id: Int = 0,
     val videoUrl: String? = null,
     val imageUrl: String? = null,
     val title: String? = null,

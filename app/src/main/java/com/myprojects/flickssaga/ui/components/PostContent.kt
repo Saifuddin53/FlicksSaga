@@ -12,15 +12,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Card
 import androidx.compose.material.Text
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,32 +42,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.FlickState
+import com.myprojects.flickssaga.data.Post
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
+import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PostContent() {
+fun PostContent(post: Post, isCurrentlyVisible: Boolean) {
+
+    val isVideoLoading = remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-        colors = CardColors(
+        colors = CardDefaults.cardColors(
             containerColor = Color(0xFFffffff),
             contentColor = Color.Black,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.White
         ),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
@@ -96,8 +107,7 @@ fun PostContent() {
                         Icon(
                             painter = painterResource(id = R.drawable.bookmarksimple),
                             contentDescription = "bookmark",
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp)
                         )
                     }
                     IconButton(onClick = { /*TODO*/ }) {
@@ -115,10 +125,8 @@ fun PostContent() {
                     .fillMaxWidth()
                     .height(400.dp)
                     .padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
-                    .clickable {
-                        // TODO
-                    },
-                colors = CardColors(
+                    .clickable { /* TODO */ },
+                colors = CardDefaults.cardColors(
                     containerColor = Color(0xFFffffff),
                     contentColor = Color.Black,
                     disabledContainerColor = Color.Gray,
@@ -127,8 +135,19 @@ fun PostContent() {
                 shape = RoundedCornerShape(24.dp),
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    VideoPlayer(videoUrl = "https://media.istockphoto.com/id/1499174722/video/tiger-cub-relaxing-and-playing-with-each-other.mp4?s=mp4-640x640-is&k=20&c=QpymSyy3XdM_rNcQzfLcvSFxmNteRd58l2GRtN2nGqY="
-                        , flickState = mutableStateOf(FlickState.Ready))
+                        AsyncImage(
+                            model = post.imageUrl,
+                            contentDescription = "video thumbnail",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+
+                    if (isCurrentlyVisible) {
+                        PostVideoPlayer(
+                            videoUrl = post.videoUrl!!,
+                            imageUrl = post.imageUrl!!,
+                        )
+                    }
                 }
             }
 
@@ -143,8 +162,7 @@ fun PostContent() {
                     Icon(
                         painter = painterResource(id = R.drawable.paperplaneright),
                         contentDescription = "bookmark",
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
                 IconButton(onClick = { /*TODO*/ }) {
@@ -158,8 +176,7 @@ fun PostContent() {
                     Icon(
                         painter = painterResource(id = R.drawable.chatdots),
                         contentDescription = "bookmark",
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
                 IconButton(onClick = { /*TODO*/ }) {
@@ -173,23 +190,18 @@ fun PostContent() {
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-            ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
                 Text(
-                    text = "Bringing the heat to California under 18 State swimming trials",
+                    text = post.title ?: "",
                     style = TextStyle(
                         fontFamily = poppinsFontFamily,
                         fontSize = 19.sp
                     ),
                     fontWeight = FontWeight(600),
-                    modifier = Modifier
-                        .padding(bottom = 6.dp)
+                    modifier = Modifier.padding(bottom = 6.dp)
                 )
                 Text(
-                    text = "Time to dry off and hit the road to Zandvoort! \uD83D\uDC4A The lap that counted \uD83D\uDC4F Jump onboard for @MaxVerstap",
+                    text = post.description ?: "",
                     style = TextStyle(
                         fontFamily = poppinsFontFamily,
                         fontSize = 12.sp
@@ -198,22 +210,24 @@ fun PostContent() {
                     modifier = Modifier
                 )
                 Text(
-                    text = "California . 3 hours ago",
+                    text = "California . ${post.timestamp?.let {
+                        android.text.format.DateUtils.getRelativeTimeSpanString(it)
+                    } ?: "Unknown time"}",
                     style = TextStyle(
                         fontFamily = poppinsFontFamily,
                         fontSize = 10.sp
                     ),
                     fontWeight = FontWeight(510),
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun PostPreview() {
-    PostContent()
-}
+
+//@Preview
+//@Composable
+//fun PostPreview() {
+//    PostContent()
+//}

@@ -216,18 +216,10 @@ fun HomeScreen(navHostController: NavHostController) {
                         progress = 1f // Set progress to 100%
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(scrollState),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        PostContent()
-                        PostContent()
-                    }
-
+                    PostScreen(videoPostViewModel = videoPostViewModel)
                     if (showBottomSheet.value) {
+
+                        // Share bottom Sheet UI
 //                        ModalBottomSheet(
 //                            onDismissRequest = { showBottomSheet = false },
 //                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -235,6 +227,7 @@ fun HomeScreen(navHostController: NavHostController) {
 //                        ) {
 //                            BottomSheetContent(username)
 //                        }
+
 
                         UploadPost(videoPostViewModel = videoPostViewModel, showBottomSheet = showBottomSheet)
                     }
