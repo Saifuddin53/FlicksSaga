@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myprojects.flickssaga.data.Post
@@ -25,11 +26,21 @@ class VideoPostViewModel: ViewModel() {
     private val _postId = MutableStateFlow(0)
     val postId = _postId.asStateFlow()
 
+    private val _currentPostIndex = MutableStateFlow(-1)
+    val currentPostIndex = _currentPostIndex.asStateFlow()
+
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
 
     init {
+        initializePostId()
         fetchPosts()
+    }
+
+    private fun initializePostId() {
+        viewModelScope.launch {
+            _postId.value = FireStoreUtil.initializePostId()
+        }
     }
 
     private fun fetchPosts() {
@@ -89,5 +100,9 @@ class VideoPostViewModel: ViewModel() {
 
     fun incrementPostId() {
         _postId.value++
+    }
+
+    fun setCurrentPostIndex(index: Int) {
+        _currentPostIndex.value = index
     }
 }

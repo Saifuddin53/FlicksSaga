@@ -42,4 +42,14 @@ object FireStoreUtil {
                 }
             }
     }
+
+    suspend fun initializePostId(): Int {
+        return try {
+            val documents = firestoreInstance.collection("posts").get().await()
+            if(documents.size() == 0) 0 else documents.size() + 1
+        } catch (e: Exception) {
+            // Handle any errors
+            0
+        }
+    }
 }

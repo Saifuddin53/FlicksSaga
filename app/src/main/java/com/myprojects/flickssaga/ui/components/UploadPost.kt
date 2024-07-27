@@ -6,6 +6,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -54,6 +55,7 @@ fun UploadPost(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
+    val isCustomThumbnail = remember { mutableStateOf(false) }
     var title = remember { mutableStateOf("") }
     var description = remember { mutableStateOf("") }
     var videoUri by remember { mutableStateOf<Uri?>(null) }
@@ -67,6 +69,15 @@ fun UploadPost(
             uri?.let {
 //                videoUrlString.value = uri.toString()
                 videoUri = uri
+            }
+        }
+    )
+
+    val thumbnailPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                imageUri = uri
             }
         }
     )
@@ -85,18 +96,40 @@ fun UploadPost(
         ) {
             Text("Upload Post", fontSize = 20.sp, color = Color.White)
 
-            Button(
-                onClick = {
-                    videoPicker.launch("video/*")
-                },
-                modifier = Modifier.padding(16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Upload video",
-                    fontSize = 20.sp,
-                    color = Color.White,
-                    modifier = Modifier.padding(10.dp)
-                )
+                Button(
+                    onClick = {
+                        videoPicker.launch("video/*")
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Upload video",
+                        fontSize = 15.sp,
+                        color = Color.White,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                }
+                Button(
+                    onClick = {
+                        thumbnailPicker.launch("image/*")
+                        isCustomThumbnail.value = true
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Upload thumbnail",
+                        fontSize = 15.sp,
+                        color = Color.White,
+                    )
+                }
             }
 
             Text("Enter details", fontSize = 20.sp, color = Color.White)
@@ -131,8 +164,10 @@ fun UploadPost(
 
             Button(
                 onClick = {
-                    imageUri = videoPostViewModel.getVideoThumbnail(context, videoUri!!)
-                        .let { videoPostViewModel.bitmapToFile(context, it, "Thumbnail") }
+                    if(!isCustomThumbnail.value) {
+                        imageUri = videoPostViewModel.getVideoThumbnail(context, videoUri!!)
+                            .let { videoPostViewModel.bitmapToFile(context, it, "Thumbnail") }
+                    }
 
                     if (title.value.isNotEmpty() && description.value.isNotEmpty() && videoUri != null) {
                         videoPostViewModel.incrementPostId()

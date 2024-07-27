@@ -1,5 +1,6 @@
 package com.myprojects.flickssaga.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myprojects.flickssaga.ui.components.PostContent
@@ -32,20 +34,20 @@ fun PostScreen(videoPostViewModel: VideoPostViewModel = viewModel()) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     var currentVisibleItemIndex by remember { mutableStateOf(-1) }
+    val currentPostIndex by videoPostViewModel.currentPostIndex.collectAsState()
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                if (index != currentVisibleItemIndex) {
-                    currentVisibleItemIndex = index
+                if (index != currentPostIndex) {
+                    videoPostViewModel.setCurrentPostIndex(index)
                 }
             }
     }
 
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(posts.size) { index ->
-            val post = posts[index]
-            PostContent(post = post, isCurrentlyVisible = index == currentVisibleItemIndex)
+            PostContent(post = posts[index], isCurrentlyVisible = index == currentPostIndex, index = index)
         }
         item { 
             Spacer(modifier = Modifier.height(80.dp))
