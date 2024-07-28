@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -32,6 +33,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
@@ -148,7 +150,8 @@ fun HomeScreen(navHostController: NavHostController) {
                 scope.launch {
                     drawerState.value = !drawerState.value
                 }
-            }
+            },
+            modifier = if(drawerState.value) Modifier.padding(0.dp) else Modifier.statusBarsPadding()
         )
     }
 
@@ -200,15 +203,13 @@ fun HomeScreen(navHostController: NavHostController) {
                         backgroundColor = Color.White,
                         modifier = Modifier.padding(bottom = 50.dp)
                     )
-                }
+                },
+                modifier = Modifier.fillMaxSize()
             ) { innerPadding ->
                 Box(
                     modifier = Modifier
                         .padding(
-                            start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + scaffoldOffset,
-                            top = innerPadding.calculateTopPadding() + verticalPadding,
-                            end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = innerPadding.calculateBottomPadding() + verticalPadding
+                            innerPadding
                         )
                 ) {
                     // Screen content
@@ -218,17 +219,30 @@ fun HomeScreen(navHostController: NavHostController) {
                     }
 
                     PostScreen(videoPostViewModel = videoPostViewModel)
+
+                    // Check for drawer state
+/*
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "Check",
+                            modifier = Modifier.fillMaxSize())
+                    }
+*/
                     if (showBottomSheet.value) {
 
                         // Share bottom Sheet UI
-//                        ModalBottomSheet(
-//                            onDismissRequest = { showBottomSheet = false },
-//                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-//                            modifier = Modifier.fillMaxHeight(0.65f),
-//                        ) {
-//                            BottomSheetContent(username)
-//                        }
 
+/*                        ModalBottomSheet(
+                            onDismissRequest = { showBottomSheet = false },
+                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                            modifier = Modifier.fillMaxHeight(0.65f),
+                        ) {
+                            BottomSheetContent(username)
+                        }
+*/
 
                         UploadPost(videoPostViewModel = videoPostViewModel, showBottomSheet = showBottomSheet)
                     }

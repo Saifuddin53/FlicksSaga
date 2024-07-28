@@ -18,7 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TopBar(title: String = "", buttonIcon: ImageVector, onButtonClicked: () -> Unit) {
+fun TopBar(modifier: Modifier = Modifier, title: String = "", buttonIcon: ImageVector, onButtonClicked: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -31,6 +31,6 @@ fun TopBar(title: String = "", buttonIcon: ImageVector, onButtonClicked: () -> U
             }
         },
         backgroundColor = MaterialTheme.colors.primaryVariant,
-        modifier = Modifier.statusBarsPadding()
+        modifier = modifier
     )
 }

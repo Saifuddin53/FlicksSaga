@@ -52,7 +52,7 @@ import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PostContent(post: Post, isCurrentlyVisible: Boolean, index: Int) {
+fun PostContent(post: Post, isCurrentlyVisible: Boolean) {
 
     Card(
         modifier = Modifier

@@ -32,8 +32,6 @@ import kotlinx.coroutines.launch
 fun PostScreen(videoPostViewModel: VideoPostViewModel = viewModel()) {
     val posts by videoPostViewModel.posts.collectAsState()
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
-    var currentVisibleItemIndex by remember { mutableStateOf(-1) }
     val currentPostIndex by videoPostViewModel.currentPostIndex.collectAsState()
 
     LaunchedEffect(listState) {
@@ -47,7 +45,7 @@ fun PostScreen(videoPostViewModel: VideoPostViewModel = viewModel()) {
 
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(posts.size) { index ->
-            PostContent(post = posts[index], isCurrentlyVisible = index == currentPostIndex, index = index)
+            PostContent(post = posts[index], isCurrentlyVisible = index == currentPostIndex)
         }
         item { 
             Spacer(modifier = Modifier.height(80.dp))
