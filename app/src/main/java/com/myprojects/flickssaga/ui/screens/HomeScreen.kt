@@ -218,6 +218,17 @@ fun HomeScreen(navHostController: NavHostController) {
                         progress = 1f // Set progress to 100%
                     }
 
+                    //Circular Progress bar
+/*                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+
+                    ) {
+                        CustomCircularProgressBar(progress = animatedProgress)
+                 }
+*/
+                    // Post Screen
                     PostScreen(videoPostViewModel = videoPostViewModel)
 
                     // Check for drawer state

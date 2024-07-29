@@ -9,12 +9,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.myprojects.flickssaga.R
@@ -23,23 +26,25 @@ import kotlinx.coroutines.delay
 @Composable
 fun CustomCircularProgressBar(
     progress: Float, // Value between 0.0 and 1.0
-    color: Color = MaterialTheme.colorScheme.primary,
+    color: Color = Color.Red,
     trackColor: Color = Color.Gray,
-    strokeWidth: Float = 8f,
-    showPercentage: Boolean = true,
+    showPercentage: Boolean = false,
+    circleSize: Dp = 50.dp
 ) {
+    val strokeWidth = with(LocalDensity.current) { circleSize.toPx() / 2 }
     if (progress < 1f) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(circleSize)
         ) {
-            Canvas(modifier = Modifier.size(100.dp)) {
+            Canvas(modifier = Modifier.size(circleSize)) {
                 // Draw the track
                 drawArc(
                     color = trackColor,
                     startAngle = 0f,
                     sweepAngle = 360f,
-                    useCenter = false,
+                    useCenter = true,
+                    size = Size(circleSize.toPx(), circleSize.toPx()),
                     style = Stroke(width = strokeWidth, cap = StrokeCap.Square)
                 )
 
@@ -56,7 +61,7 @@ fun CustomCircularProgressBar(
             Image(
                 painter = painterResource(id = R.drawable.__1_),
                 contentDescription = null,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.fillMaxSize(0.7f)
             )
 
             if (showPercentage) {
