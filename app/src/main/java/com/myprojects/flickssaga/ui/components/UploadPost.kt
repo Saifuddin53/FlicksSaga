@@ -60,6 +60,9 @@ fun UploadPost(
     var description = remember { mutableStateOf("") }
     var videoUri by remember { mutableStateOf<Uri?>(null) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var images by remember { mutableStateOf<List<Uri>>(mutableListOf()) }
+
+    var imagesSelected by remember { mutableStateOf(0) }
 
     val postId = videoPostViewModel.postId.collectAsState()
 
@@ -82,6 +85,15 @@ fun UploadPost(
         }
     )
 
+    val imagesPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                images = images + uri
+            }
+        }
+    )
+
     ModalBottomSheet(
         onDismissRequest = {
             showBottomSheet.value = false
@@ -97,39 +109,57 @@ fun UploadPost(
             Text("Upload Post", fontSize = 20.sp, color = Color.White)
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(
-                    onClick = {
-                        videoPicker.launch("video/*")
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Upload video",
-                        fontSize = 15.sp,
-                        color = Color.White,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                }
-                Button(
-                    onClick = {
-                        thumbnailPicker.launch("image/*")
-                        isCustomThumbnail.value = true
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Upload thumbnail",
-                        fontSize = 15.sp,
-                        color = Color.White,
-                    )
-                }
+//                Button(
+//                    onClick = {
+//                        videoPicker.launch("video/*")
+//                    },
+//                    modifier = Modifier
+//                        .weight(1f)
+//                ) {
+//                    Text(
+//                        text = "Upload video",
+//                        fontSize = 15.sp,
+//                        color = Color.White,
+//                        modifier = Modifier.padding(end = 8.dp)
+//                    )
+//                }
+//                Button(
+//                    onClick = {
+//                        thumbnailPicker.launch("image/*")
+//                        isCustomThumbnail.value = true
+//                    },
+//                    modifier = Modifier
+//                        .weight(1f)
+//                ) {
+//                    Text(
+//                        text = "Upload thumbnail",
+//                        fontSize = 15.sp,
+//                        color = Color.White,
+//                    )
+//                }
+
+                    Button(
+                        onClick = {
+                            imagesPicker.launch("image/*")
+                            imagesSelected ++
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "Upload Images",
+                            fontSize = 15.sp,
+                            color = Color.White,
+                        )
+                    }
+                    Text(text = "$imagesSelected images selected")
+
             }
 
             Text("Enter details", fontSize = 20.sp, color = Color.White)
@@ -164,7 +194,7 @@ fun UploadPost(
 
             Button(
                 onClick = {
-                    if(!isCustomThumbnail.value) {
+                    if(isCustomThumbnail.value) {
                         imageUri = videoPostViewModel.getVideoThumbnail(context, videoUri!!)
                             .let { videoPostViewModel.bitmapToFile(context, it, "Thumbnail") }
                     }
@@ -175,8 +205,13 @@ fun UploadPost(
                         coroutineScope.launch {
                             videoPostViewModel.uploadFilesAndSavePost(videoUri!!, imageUri, post)
                         }
-                    } else {
-                        // Show error message
+                    } else if (title.value.isNotEmpty() && description.value.isNotEmpty() && images.isNotEmpty()) {
+                        videoPostViewModel.incrementPostId()
+                        val post = Post(id = postId.value, title = title.value, description = description.value, timestamp = System.currentTimeMillis())
+                        coroutineScope.launch {
+                            videoPostViewModel.uploadImagesAndSavePost(images, post)
+                        }
+                        Toast.makeText(context, "${images.size}", Toast.LENGTH_SHORT).show()
                     }
 
                     scope.launch { sheetState.hide() }.invokeOnCompletion {

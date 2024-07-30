@@ -1,22 +1,31 @@
 package com.myprojects.flickssaga.ui.components
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material.Text
 import androidx.compose.material3.CardColors
@@ -36,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.FlickState
 import com.myprojects.flickssaga.data.Post
@@ -132,7 +145,8 @@ fun PostContent(post: Post, isCurrentlyVisible: Boolean) {
                 ),
                 shape = RoundedCornerShape(24.dp),
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
+                if(post.videoUrl != null) {
+                    Box(modifier = Modifier.fillMaxSize()) {
                         AsyncImage(
                             model = post.imageUrl,
                             contentDescription = "video thumbnail",
@@ -140,11 +154,23 @@ fun PostContent(post: Post, isCurrentlyVisible: Boolean) {
                             contentScale = ContentScale.Crop
                         )
 
-                    if (isCurrentlyVisible) {
-                        PostVideoPlayer(
-                            videoUrl = post.videoUrl!!,
-                            imageUrl = post.imageUrl!!,
-                        )
+                        if (isCurrentlyVisible) {
+                            PostVideoPlayer(
+                                videoUrl = post.videoUrl,
+                                imageUrl = post.imageUrl!!,
+                            )
+                        }
+                    }
+                }else if (post.images != null) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(), // Fill the width of the parent
+
+                        ) {
+                            // Call the ImageScrollWithTextOverlay function with the list of images
+                            ImageScrollWithTextOverlay(post.images)
+                        }
                     }
                 }
             }
@@ -188,7 +214,9 @@ fun PostContent(post: Post, isCurrentlyVisible: Boolean) {
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)) {
                 Text(
                     text = post.title ?: "",
                     style = TextStyle(
@@ -217,6 +245,56 @@ fun PostContent(post: Post, isCurrentlyVisible: Boolean) {
                     ),
                     fontWeight = FontWeight(510),
                     modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ImageScrollWithTextOverlay(images: List<String?>) {
+    val pagerState = rememberPagerState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        HorizontalPager(
+            count = images.size,
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                // Load the image asynchronously
+                AsyncImage(
+                    model = images[page], // The URL of the image
+                    contentDescription = null, // No content description is provided
+                    modifier = Modifier.fillMaxSize(), // Fill the width of the parent
+                    contentScale = ContentScale.Crop // Scale the image to fill the width of the ImageView
+                )
+            }
+        }
+
+        if(images.size > 1) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd) // Align the text to the top end of the box
+                    .padding(8.dp)
+                    .width(40.dp)
+                    .background(color = Color.Black.copy(alpha = 0.6f), shape = RoundedCornerShape(10.dp))
+            ) {
+                // Display the image index and total number of images
+                Text(
+                    text = "${pagerState.currentPage + 1}/${images.size}", // The text to display
+                    style = TextStyle(
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 14.sp
+                    ).copy(color = Color.White),
+                    modifier = Modifier
+                        .align(Alignment.Center)
                 )
             }
         }

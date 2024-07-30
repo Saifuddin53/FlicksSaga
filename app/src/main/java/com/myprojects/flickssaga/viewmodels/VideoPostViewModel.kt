@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myprojects.flickssaga.data.Post
@@ -64,6 +65,25 @@ class VideoPostViewModel: ViewModel() {
             }
         }
     }
+
+
+    fun uploadImagesAndSavePost(images: List<Uri>, post: Post) {
+        var id = 0
+        CoroutineScope(Dispatchers.IO).launch {
+            var imagesUrl: List<String?> = listOf()
+            images.forEach { imageUri ->
+                val imageUrl = imageUri.let { FirebaseStorageUtil.uploadFile(it, "images", "$id${post.id}.jpg") }
+                id++
+                imagesUrl = imagesUrl + imageUrl
+            }
+
+            if(imagesUrl.isNotEmpty()) {
+                val updatedPost = post.copy(images = imagesUrl)
+                FireStoreUtil.savePost(updatedPost)
+            }
+        }
+    }
+
 
     fun bitmapToFile(context: Context, bitmap: Bitmap?, fileName: String): Uri {
         val file = File(context.cacheDir, fileName)

@@ -74,6 +74,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("com.google.accompanist:accompanist-pager:0.26.2-beta")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.26.2-beta")
+
 
     implementation("commons-io:commons-io:2.11.0")
 

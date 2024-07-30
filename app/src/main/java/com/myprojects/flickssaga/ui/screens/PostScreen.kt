@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.myprojects.flickssaga.data.Post
 import com.myprojects.flickssaga.ui.components.PostContent
 import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 import kotlinx.coroutines.launch
@@ -47,7 +49,7 @@ fun PostScreen(videoPostViewModel: VideoPostViewModel = viewModel()) {
         items(posts.size) { index ->
             PostContent(post = posts[index], isCurrentlyVisible = index == currentPostIndex)
         }
-        item { 
+        item {
             Spacer(modifier = Modifier.height(80.dp))
         }
     }
