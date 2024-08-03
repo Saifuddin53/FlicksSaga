@@ -273,7 +273,7 @@ fun ImageScrollWithTextOverlay(images: List<String?>) {
                     model = images[page], // The URL of the image
                     contentDescription = null, // No content description is provided
                     modifier = Modifier.fillMaxSize(), // Fill the width of the parent
-                    contentScale = ContentScale.Crop // Scale the image to fill the width of the ImageView
+                    contentScale = ContentScale.Crop
                 )
             }
         }
