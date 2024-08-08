@@ -88,7 +88,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:21.0.1")
 
     // Coil for image loading
-    implementation(libs.coil.compose)
+    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation("io.coil-kt:coil-gif:2.3.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

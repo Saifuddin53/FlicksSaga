@@ -3,8 +3,10 @@ package com.myprojects.flickssaga.ui.screens
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -24,9 +26,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,7 +42,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
@@ -51,20 +49,12 @@ import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalDrawer
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -77,8 +67,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -90,25 +80,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.AppIconShare
 import com.myprojects.flickssaga.data.User
-import com.myprojects.flickssaga.ui.components.BackPressHandler
+import com.myprojects.flickssaga.ui.components.AiGeneratedTextField
+import com.myprojects.flickssaga.ui.components.AnimatedTextField
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
-import com.myprojects.flickssaga.ui.components.CustomCircularProgressBar
 import com.myprojects.flickssaga.ui.components.Drawer
-import com.myprojects.flickssaga.ui.components.DrawerItem
-import com.myprojects.flickssaga.ui.components.DrawerItems
-import com.myprojects.flickssaga.ui.components.PostContent
-import com.myprojects.flickssaga.ui.components.Screen
 import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.components.UploadPost
+import com.myprojects.flickssaga.ui.components.strings
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun HomeScreen(navHostController: NavHostController) {
     val drawerState = remember { mutableStateOf(false) }
@@ -122,8 +113,6 @@ fun HomeScreen(navHostController: NavHostController) {
     )
 
     val videoPostViewModel: VideoPostViewModel = viewModel()
-
-    val scrollState = rememberScrollState()
 
     var username = remember { mutableStateOf("") }
 
@@ -154,6 +143,16 @@ fun HomeScreen(navHostController: NavHostController) {
             modifier = if(drawerState.value) Modifier.padding(0.dp) else Modifier.statusBarsPadding()
         )
     }
+
+    val imageLoader = ImageLoader.Builder(LocalContext.current)
+        .components {
+            if (SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }
+        .build()
 
     Row(
         modifier = Modifier.background(Color.Black)
@@ -229,8 +228,16 @@ fun HomeScreen(navHostController: NavHostController) {
                  }
 */
                     // Post Screen
-                    PostScreen(videoPostViewModel = videoPostViewModel)
+//                    PostScreen(videoPostViewModel = videoPostViewModel)
 
+
+//                    AiGeneratedTextField("Saifuddin Adenwala is a good boy")
+
+                    Column(modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center) {
+                        AnimatedTextField(strings[0], { string -> })
+                    }
                     // Check for drawer state
 /*
                     Column(
