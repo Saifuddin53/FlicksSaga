@@ -16,6 +16,7 @@ import com.myprojects.flickssaga.ui.screens.ChatScreen
 import com.myprojects.flickssaga.ui.screens.FlicksScreen
 import com.myprojects.flickssaga.ui.screens.HomeScreen
 import com.myprojects.flickssaga.ui.screens.UploadScreen
+import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
 
 @Composable
@@ -34,5 +35,6 @@ fun NavigationHost(
         composable(Screen.Upload.route) { UploadScreen(flickViewModel, navController) }
         composable(Screen.Flicks.route) { FlicksScreen(flickViewModel) }
         composable(DrawerItems.Questionnaire.route) { ChatScreen(navController) }
+        composable(DrawerItems.YourActivity.route) { NotificationScreen() }
     }
 }

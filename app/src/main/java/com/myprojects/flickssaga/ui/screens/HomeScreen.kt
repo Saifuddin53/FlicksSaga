@@ -95,6 +95,7 @@ import com.myprojects.flickssaga.ui.components.Drawer
 import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.components.UploadPost
 import com.myprojects.flickssaga.ui.components.strings
+import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 import kotlinx.coroutines.launch
@@ -233,11 +234,13 @@ fun HomeScreen(navHostController: NavHostController) {
 
 //                    AiGeneratedTextField("Saifuddin Adenwala is a good boy")
 
-                    Column(modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center) {
-                        AnimatedTextField(strings[0], { string -> })
-                    }
+//                    Column(modifier = Modifier.fillMaxSize(),
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                        verticalArrangement = Arrangement.Center) {
+//                        AnimatedTextField(strings[0], { string -> })
+//                    }
+
+
                     // Check for drawer state
 /*
                     Column(

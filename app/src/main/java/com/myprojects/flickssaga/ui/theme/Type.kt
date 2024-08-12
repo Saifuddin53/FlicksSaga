@@ -41,3 +41,8 @@ val poppinsFontFamily = FontFamily(
     Font(R.font.poppins_italic, FontWeight.Normal, FontStyle.Italic),
     Font(R.font.poppins_bold, FontWeight.Bold, FontStyle.Normal)
 )
+
+val poppinsTextStyle = TextStyle(
+    fontFamily = poppinsFontFamily,
+    fontSize = 20.sp
+)
