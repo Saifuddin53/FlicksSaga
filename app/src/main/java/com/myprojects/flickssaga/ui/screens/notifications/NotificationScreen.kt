@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -35,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -99,6 +105,13 @@ fun NotificationScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            item {
+                HorizontalFilterList(
+                    selectedCategories = selectedCategories,
+                ) {
+                    selectedCategories = it
+                }
+            }
             // Show Violation notifications first
             groupedNotifications["Violation"]?.let { violationNotifications ->
                 if (violationNotifications.isNotEmpty()) {
@@ -218,7 +231,9 @@ fun FilterModal(
 
 @Composable
 fun CustomCheckbox(
-    checked: Boolean, modifier: Modifier = Modifier, color: Color = Color.Gray
+    checked: Boolean,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Gray
 ) {
     Box(
         modifier = modifier
@@ -241,6 +256,68 @@ fun CustomCheckbox(
     }
 }
 
+
+@Composable
+fun HorizontalFilterList(
+    selectedCategories: List<CATEGORY>,
+    onFilterSelected: (List<CATEGORY>) -> Unit
+) {
+    val categories = CATEGORY.entries.toTypedArray()
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        items(categories) { category ->
+            val isSelected = selectedCategories.contains(category)
+            FilterChip(
+                category = category,
+                isSelected = isSelected,
+                onClick = { onFilterSelected(it) },
+                selectedCategories = selectedCategories
+            )
+
+            Spacer(modifier = Modifier.width(8.dp)) // Space between chips
+        }
+    }
+}
+
+@Composable
+fun FilterChip(
+    category: CATEGORY,
+    isSelected: Boolean,
+    onClick: (List<CATEGORY>) -> Unit,
+    selectedCategories: List<CATEGORY>
+) {
+    Box(
+        modifier = Modifier
+            .clickable{
+                val newSelection = if (isSelected) {
+                    selectedCategories - category
+                } else {
+                    selectedCategories + category
+                }
+                onClick(newSelection)
+            }
+            .background(
+                brush = if(isSelected)
+                    Brush.linearGradient(colors = listOf(Color(0xFF228B22), Color(0xFF808000), Color(0xFF98FF98)))
+                else
+                    Brush.linearGradient(colors = listOf(Color.LightGray, Color.LightGray)),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+        ,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = category.toReadableString(),
+            color = if (isSelected) Color.White else Color.Black,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
 
 @Composable
 fun groupNotificationsByDate(
@@ -275,13 +352,15 @@ fun groupNotificationsByDate(
 val notificationList: List<Notification> = listOf(
     Notification(1, "abc", "liked your post and this is a long text. ", 1324320000, CATEGORY.LIKE),
     Notification(2, "abc", "liked your post. ", 1723258618000, CATEGORY.LIKE),
-    Notification(3, "abc", "liked your post long text. ", 1, CATEGORY.LIKE),
+    Notification(3, "abc", "Followed you. ", 1723703574000, CATEGORY.FOLLOW),
+    Notification(3, "abc", "Followed you. ", 1723703574000, CATEGORY.FOLLOW),
+    Notification(3, "abc", "liked your post long text. ", 1723703574000, CATEGORY.LIKE),
     Notification(4, "abc", "liked your post. ", 1723345018000, CATEGORY.LIKE),
     Notification(5, "abc", "liked your post and this is a long text. ", 1, CATEGORY.LIKE),
     Notification(4, "abc", "commented in this post ", 1723440371000, CATEGORY.COMMENT),
     Notification(4, "abc", "liked your post. ", 1723440371000, CATEGORY.LIKE),
     Notification(4, "abc", "liked your post. ", 1723345018000, CATEGORY.LIKE),
-    Notification(4, "abc", "liked your post. ", 1723345011000, CATEGORY.LIKE),
+    Notification(4, "abc", "liked your post. ", 1723617174000, CATEGORY.LIKE),
     Notification(4, "", "Your account is not secure. ", 1723345018000, CATEGORY.VIOLATION),
 )
 
