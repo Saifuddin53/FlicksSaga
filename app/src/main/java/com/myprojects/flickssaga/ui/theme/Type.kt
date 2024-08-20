@@ -9,10 +9,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.myprojects.flickssaga.R
 
+
+val poppinsFontFamily = FontFamily(
+    Font(R.font.poppins_regular, FontWeight.Normal, FontStyle.Normal),
+    Font(R.font.poppins_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.poppins_bold, FontWeight.Bold, FontStyle.Normal)
+)
+
+val poppinsTextStyle = TextStyle(
+    fontFamily = poppinsFontFamily,
+    fontSize = 20.sp
+)
+
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
@@ -36,13 +49,3 @@ val Typography = Typography(
     */
 )
 
-val poppinsFontFamily = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal, FontStyle.Normal),
-    Font(R.font.poppins_italic, FontWeight.Normal, FontStyle.Italic),
-    Font(R.font.poppins_bold, FontWeight.Bold, FontStyle.Normal)
-)
-
-val poppinsTextStyle = TextStyle(
-    fontFamily = poppinsFontFamily,
-    fontSize = 20.sp
-)

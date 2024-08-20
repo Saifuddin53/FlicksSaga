@@ -202,6 +202,7 @@ fun HomeScreen(navHostController: NavHostController) {
                         onClick = { showBottomSheet.value = true },
                         backgroundColor = Color.White,
                         modifier = Modifier.padding(bottom = 50.dp)
+                            .align(Alignment.TopStart)
                     )
                 },
                 modifier = Modifier.fillMaxSize()

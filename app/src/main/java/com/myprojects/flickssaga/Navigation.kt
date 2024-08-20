@@ -1,14 +1,13 @@
 package com.myprojects.flickssaga
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.myprojects.flickssaga.repositories.FlickRepository
+import com.myprojects.flickssaga.ui.screens.map.DiscoverScreen
 import com.myprojects.flickssaga.ui.components.DrawerItems
 import com.myprojects.flickssaga.ui.components.LocalBackPressedDispatcher
 import com.myprojects.flickssaga.ui.components.Screen
@@ -36,5 +35,6 @@ fun NavigationHost(
         composable(Screen.Flicks.route) { FlicksScreen(flickViewModel) }
         composable(DrawerItems.Questionnaire.route) { ChatScreen(navController) }
         composable(DrawerItems.YourActivity.route) { NotificationScreen() }
+        composable(Screen.Discover.route) { DiscoverScreen(navController) }
     }
 }

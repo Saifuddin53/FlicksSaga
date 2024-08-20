@@ -11,10 +11,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.myprojects.flickssaga.R
+import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 
 //
 //@Composable
@@ -60,12 +64,13 @@ import com.myprojects.flickssaga.R
 fun BottomNavigationBar(navController: NavHostController) {
     val items = listOf(
         Screen.Home,
+        Screen.Discover,
         Screen.Upload,
         Screen.Flicks
     )
     BottomNavigation(
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = Color.White
+        backgroundColor = Color.White,
+        contentColor = Color.Gray
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -78,8 +83,15 @@ fun BottomNavigationBar(navController: NavHostController) {
                         Modifier.size(30.dp)
                     )
                 },
-                label = { Text(text = "") },
+                label = { Text(text = screen.title,
+                    style = TextStyle(
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                )
+                ) },
                 selected = currentRoute == screen.route,
+                alwaysShowLabel = true,
                 onClick = {
                     if (currentRoute != screen.route) {
                         navController.navigate(screen.route) {
@@ -90,7 +102,9 @@ fun BottomNavigationBar(navController: NavHostController) {
                             restoreState = true
                         }
                     }
-                }
+                },
+                selectedContentColor = Color.Black,
+                unselectedContentColor = Color.Gray
             )
         }
     }
@@ -99,6 +113,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
 sealed class Screen(val route: String, val title: String, val icon: Int) {
     object Home : Screen("home", "Home", R.drawable.ic_home)
+    object Discover : Screen("discover", "Discover", R.drawable.discover)
     object Upload : Screen("upload", "Upload", R.drawable.ic_upload)
     object Flicks : Screen("flicks", "Flicks", R.drawable.ic_flicks)
 }
