@@ -66,7 +66,8 @@ fun BottomNavigationBar(navController: NavHostController) {
         Screen.Home,
         Screen.Discover,
         Screen.Upload,
-        Screen.Flicks
+        Screen.Flicks,
+        Screen.Marketplace
     )
     BottomNavigation(
         backgroundColor = Color.White,
@@ -80,13 +81,13 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Icon(
                         painter = painterResource(id = screen.icon),
                         contentDescription = screen.route,
-                        Modifier.size(30.dp)
+                        Modifier.size(22.dp)
                     )
                 },
                 label = { Text(text = screen.title,
                     style = TextStyle(
                     fontFamily = poppinsFontFamily,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Normal,
                 )
                 ) },
@@ -115,5 +116,6 @@ sealed class Screen(val route: String, val title: String, val icon: Int) {
     object Home : Screen("home", "Home", R.drawable.ic_home)
     object Discover : Screen("discover", "Discover", R.drawable.discover)
     object Upload : Screen("upload", "Upload", R.drawable.ic_upload)
+    object Marketplace : Screen("marketplace", "Market", R.drawable.shop)
     object Flicks : Screen("flicks", "Flicks", R.drawable.ic_flicks)
 }

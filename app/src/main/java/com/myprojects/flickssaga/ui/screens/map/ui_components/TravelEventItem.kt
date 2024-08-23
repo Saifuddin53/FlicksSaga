@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Geocoder
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -30,12 +32,20 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -59,137 +69,229 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TravelEventItem(travelEvent: TravelEventEntity) {
-    Column(
+    var columnHeightDp by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+
+    Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xffF5F5F5)
-            )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
         ) {
-            Column(
+            Box(modifier = Modifier) {
+                // Marker icon at the top
+                Icon(
+                    painter = painterResource(id = R.drawable.solid_location_pin), // Replace with your marker icon
+                    contentDescription = null,
+                    tint = Color(0xFF00A3FF),
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(text = travelEvent.id.toString(),
+                    style = Typography.bodyMedium.copy(
+                        fontWeight = FontWeight(500),
+                        fontSize = 14.sp,
+                        color = Color.White
+                    ),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            // Dotted vertical line
+            Canvas(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .width(2.dp)
+                    .height(columnHeightDp + 70.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                val lineHeight = size.height
+                drawLine(
+                    color = Color.Black,
+                    start = Offset(x = size.width / 2, y = 0f),
+                    end = Offset(x = size.width / 2, y = lineHeight),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f), // Dotted effect
+                    strokeWidth = 2f
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .background(color = Color(0xFF00A3FF), shape = RoundedCornerShape(10.dp))
+                    .size(30.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.direciton_fill), // Replace with your marker icon
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.Center)
+                )
+            }
+
+            // Dotted vertical line
+            Canvas(
+                modifier = Modifier
+                    .width(2.dp)
+                    .height(40.dp)
+            ) {
+                val lineHeight = size.height
+                drawLine(
+                    color = Color.Black,
+                    start = Offset(x = size.width / 2, y = 0f),
+                    end = Offset(x = size.width / 2, y = lineHeight),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f), // Dotted effect
+                    strokeWidth = 2f
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 8.dp)
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xffF5F5F5)
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .onGloballyPositioned { layoutCoordinates ->
+                            val heightPx = layoutCoordinates.size.height
+                            columnHeightDp = with(density) { heightPx.toDp() }
+                        }
                 ) {
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(painter = painterResource(id = R.drawable.clock),
+                                contentDescription = "",
+                                tint = Color.Black)
+                            Text(text = "${formatTimestampToTime(travelEvent.startTimestamp)} - ${formatTimestampToTime(travelEvent.endTimestamp)}",
+                                style = Typography.bodyMedium.copy(Color.Black),
+                                modifier = Modifier.padding(horizontal = 14.dp)
+                            )
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(painter = painterResource(id = R.drawable.baseline_more_horiz_24),
+                                contentDescription = "",
+                                tint = Color.Black)
+                        }
+                    }
+                    //image
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .padding(bottom = 8.dp)
+                            .clickable { /* TODO */ },
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFffffff),
+                            contentColor = Color.Black,
+                            disabledContainerColor = Color.Gray,
+                            disabledContentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(24.dp),
+                    ) {
+                        ImageScrollWithTextOverlay(travelEvent.imagesUrl)
+                    }
+                    //title
+                    Text(text = travelEvent.title,
+                        style = Typography.bodyLarge.copy(
+                            fontWeight = FontWeight(600)
+                        ),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(painter = painterResource(id = R.drawable.clock),
-                            contentDescription = "",
-                            tint = Color.Black)
-                        Text(text = "${formatTimestampToTime(travelEvent.startTimestamp)} - ${formatTimestampToTime(travelEvent.endTimestamp)}",
-                            style = Typography.bodyMedium.copy(Color.Black),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                        StarRatingBar(
+                            maxStars = 5,
+                            rating = 4.2f,
+                            onRatingChanged = {
+                                // Handle rating change
+                            }
+                        )
+                        Text(text = "20,320 Reviews",
+                            style = Typography.bodyMedium.copy(
+                                fontWeight = FontWeight(600),
+                                color = Color(0xff595959),
+                                fontSize = 10.sp
+                            ),
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .align(Alignment.Bottom)
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_more_horiz_24),
-                            contentDescription = "",
-                            tint = Color.Black)
-                    }
-                }
-                //image
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .padding(vertical = 8.dp)
-                        .clickable { /* TODO */ },
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFffffff),
-                        contentColor = Color.Black,
-                        disabledContainerColor = Color.Gray,
-                        disabledContentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(24.dp),
-                ) {
-                    ImageScrollWithTextOverlay(travelEvent.imagesUrl)
-                }
-                //title
-                Text(text = travelEvent.title,
-                    style = Typography.bodyLarge.copy(
-                        fontWeight = FontWeight(600)
-                    ),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp), 
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    StarRatingBar(
-                        maxStars = 5,
-                        rating = 4.2f,
-                        onRatingChanged = {
-                           // Handle rating change
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(0.9f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.location),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = getAddressFromLocation(LocalContext.current, travelEvent.latitude, travelEvent.longitude) ?: "",
+                                style = Typography.bodyMedium.copy(Color.Black),
+                                modifier = Modifier.padding(horizontal = 8.dp) // Adjust padding if needed
+                            )
                         }
-                    )
-                    Text(text = "20,320 Reviews",
-                        style = Typography.bodyMedium.copy(
-                            fontWeight = FontWeight(600),
-                            color = Color(0xff595959)
-                        ),
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row {
-                        Icon(painter = painterResource(id = R.drawable.location),
-                            contentDescription = "",
-                            modifier = Modifier.size(24.dp)
-                        )
-//                        Text(text = getAddressFromLocation(LocalContext.current, travelEvent.latitude, travelEvent.longitude)!!,
-//                            style = Typography.bodyMedium.copy(Color.Black),
-//                            modifier = Modifier.padding(horizontal = 16.dp)
-//                        )
-                    }
-                    Row {
+
                         Card(
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier,
                             shape = RoundedCornerShape(20.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = Color(0xff00A3FF)
                             )
                         ) {
-                            Icon(painter = painterResource(id = R.drawable.map_outline_icon),
-                                contentDescription = "",
+                            Icon(
+                                painter = painterResource(id = R.drawable.map_outline_icon),
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .padding(10.dp),
+                                    .size(30.dp)
+                                    .padding(8.dp),
                                 tint = Color.White
                             )
                         }
                     }
                 }
             }
-        }
 
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        ) {
-            items(travelEvent.tags) { tag ->
-                TagItem(tag = tag)
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                items(travelEvent.tags) { tag ->
+                    TagItem(tag = tag)
+                }
             }
-        }
 
-        DirectionItem(distance = travelEvent.distance)
+            DirectionItem(distance = travelEvent.distance)
+        }
     }
 }
 
@@ -218,31 +320,30 @@ fun ImageScrollWithTextOverlay(images: List<String?>) {
             }
         }
 
-        if(images.size > 1) {
-            Box(
+        // Show dots at the bottom center of the image
+        if (images.size > 1) {
+            Row(
                 modifier = Modifier
-                    .align(Alignment.TopEnd) // Align the text to the top end of the box
-                    .padding(8.dp)
-                    .width(40.dp)
-                    .background(
-                        color = Color.Black.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(10.dp)
-                    )
+                    .align(Alignment.BottomCenter) // Align the row to the bottom center of the box
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Display the image index and total number of images
-                androidx.compose.material.Text(
-                    text = "${pagerState.currentPage + 1}/${images.size}", // The text to display
-                    style = TextStyle(
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 14.sp
-                    ).copy(color = Color.White),
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                )
+                // Iterate through the images and show a dot for each image
+                images.forEachIndexed { index, _ ->
+                    val color = if (pagerState.currentPage == index) Color.White else Color.Gray
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 2.dp)
+                            .size(6.dp)
+                            .background(color, shape = CircleShape)
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun StarRatingBar(
@@ -251,7 +352,7 @@ fun StarRatingBar(
     onRatingChanged: (Float) -> Unit
 ) {
     val density = LocalDensity.current.density
-    val starSize = (12f * density).dp
+    val starSize = (8f * density).dp
     val starSpacing = (0.5f * density).dp
 
     Row(
@@ -346,9 +447,9 @@ fun DirectionItem(distance: String) {
             Text(text = distance,
                 style = Typography.bodyMedium.copy(
                     fontWeight = FontWeight(500),
-                    fontSize = 18.sp
+                    fontSize = 16.sp
                 ),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Row(
                 modifier = Modifier
@@ -360,13 +461,13 @@ fun DirectionItem(distance: String) {
                 Text(text = "Direction ",
                     style = Typography.bodyMedium.copy(
                         fontWeight = FontWeight(500),
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         color = Color(0xff00A3FF)
                     ),
                 )
                 Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_right_24),
                     contentDescription = "",
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(16.dp),
                     tint = Color(0xff00A3FF))
             }
         }

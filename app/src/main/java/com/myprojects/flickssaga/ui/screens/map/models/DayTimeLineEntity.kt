@@ -5,6 +5,6 @@ import java.time.LocalDate
 data class DayTimeLineEntity(
     val id: Int,
     val day: LocalDate,
-    var isSelected: Boolean,
+    var selectedDateId: Int,
     val travelEvents: List<TravelEventEntity>
 )

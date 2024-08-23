@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.ui.screens.map.models.ItineraryEntity
@@ -37,7 +39,10 @@ import java.time.format.DateTimeFormatter
 fun ItineraryDetailItem(itinerary: ItineraryEntity) {
     Card(
         modifier = Modifier
-            .padding(horizontal = 20.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 150.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xffF5F5F5)
+        )
     ) {
         Column(
             modifier = Modifier
@@ -69,10 +74,12 @@ fun ItineraryDetailItem(itinerary: ItineraryEntity) {
                             Icon(
                                 painter = painterResource(id = R.drawable.clock),
                                 contentDescription = "",
-                                modifier = Modifier.padding(start = 14.dp, end = 6.dp)
+                                modifier = Modifier.padding(start = 14.dp, end = 4.dp)
+                                    .size(18.dp)
                             )
                             Text(
                                 text = "${itinerary.days.size}-Day",
+                                style = Typography.bodyMedium
                             )
                         }
                     }
@@ -82,7 +89,7 @@ fun ItineraryDetailItem(itinerary: ItineraryEntity) {
                         contentDescription = "user image",
                         modifier = Modifier
                             .padding(8.dp)
-                            .size(40.dp)
+                            .size(30.dp)
                             .clip(CircleShape)
                     )
                 }
@@ -97,10 +104,14 @@ fun ItineraryDetailItem(itinerary: ItineraryEntity) {
                         Card(
                             modifier = Modifier,
                             shape = RoundedCornerShape(20.dp),
-                            border = BorderStroke(width = 1.dp, brush = Brush.linearGradient(listOf(Color.LightGray, Color.LightGray)))
+                            border = BorderStroke(width = 1.dp, brush = Brush.linearGradient(listOf(Color.LightGray, Color.LightGray))), colors = CardDefaults.cardColors(
+                                containerColor = Color(0xffF5F5F5)
+                            )
+
                         ) {
                             Text(text = "${formatDate(itinerary.startDate)}  ------->  ${formatDate(itinerary.endDate)}",
-                                style = Typography.bodySmall.copy(
+                                style = Typography.bodyMedium.copy(
+                                    fontSize = 10.sp,
                                     color = Color(0xff595959)
                                 ),
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
@@ -109,7 +120,10 @@ fun ItineraryDetailItem(itinerary: ItineraryEntity) {
                         Card(
                             modifier = Modifier.padding(start = 8.dp),
                             shape = RoundedCornerShape(20.dp),
-                            border = BorderStroke(width = 1.dp, brush = Brush.linearGradient(listOf(Color.LightGray, Color.LightGray)))
+                            border = BorderStroke(width = 1.dp, brush = Brush.linearGradient(listOf(Color.LightGray, Color.LightGray))),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xffF5F5F5)
+                            )
                         ) {
                             Icon(painter = painterResource(id = R.drawable.pen_edit),
                                 contentDescription = "",
@@ -119,7 +133,10 @@ fun ItineraryDetailItem(itinerary: ItineraryEntity) {
                     Card(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
                         shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(width = 1.dp, brush = Brush.linearGradient(listOf(Color.LightGray, Color.LightGray)))
+                        border = BorderStroke(width = 1.dp, brush = Brush.linearGradient(listOf(Color.LightGray, Color.LightGray))),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xffF5F5F5)
+                        )
                     ) {
                         Icon(painter = painterResource(id = R.drawable.bookmark),
                             contentDescription = "",
