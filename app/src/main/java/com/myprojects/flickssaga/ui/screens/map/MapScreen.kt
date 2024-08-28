@@ -1,5 +1,7 @@
 package com.myprojects.flickssaga.ui.screens.map
 
+import android.annotation.SuppressLint
+import android.graphics.Paint.Align
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.scrollable
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -45,6 +48,7 @@ import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.screens.map.models.DayTimeLineEntity
+import com.myprojects.flickssaga.ui.screens.map.models.ItineraryEntity
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
 import com.myprojects.flickssaga.ui.screens.map.ui_components.DayHorizontalScrollItem
 import com.myprojects.flickssaga.ui.screens.map.ui_components.DayHorizontalScrollItemPreview
@@ -87,6 +91,7 @@ fun TimelineScreen(modifier: Modifier = Modifier) {
     var currentImgAlpha by remember { mutableStateOf(1f) }
     var isTopBarVisible by remember { mutableStateOf(false) }
     var isScrollingBlocked by remember { mutableStateOf(false) }
+    var currentSelectedDate = remember { mutableStateOf(days.get(0)) }
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -123,15 +128,22 @@ fun TimelineScreen(modifier: Modifier = Modifier) {
             }
             if (selectedItem == "itinerary") {
                 item {
-                    DayHorizontalScrollItem(days)
+                    DayHorizontalScrollItem(itinerary.daysMap.values.toList(), currentSelectedDate)
                 }
                 item {
                     LazyColumn(
                         modifier = Modifier.height(800.dp),
                         userScrollEnabled = isScrollingBlocked
                     ) {
-                        items(travelEvents) {
-                            TravelEventItem(travelEvent = it)
+                        if(currentSelectedDate.value.travelEvents.isNotEmpty()) {
+                            items(currentSelectedDate.value.travelEvents) {
+                                TravelEventItem(travelEvent = it)
+                            }
+                        } else {
+                            item {
+                                Text(text = "No events",
+                                    modifier = Modifier.align(Alignment.Center))
+                            }
                         }
                     }
                 }
@@ -142,7 +154,7 @@ fun TimelineScreen(modifier: Modifier = Modifier) {
             }
         }
         if (!isTopBarVisible) {
-            TimelineItineraryContent(contentHeight = currentImgSize, imgAlpha = currentImgAlpha)
+            TimelineItineraryContent(itineraryEntity = itinerary, contentHeight = currentImgSize, imgAlpha = currentImgAlpha)
         } else {
             TopBar()
         }
@@ -171,14 +183,6 @@ fun TopBar() {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-val days = listOf(
-    DayTimeLineEntity(1, LocalDate.now(), 1, listOf()),
-    DayTimeLineEntity(2, LocalDate.now(), 1, listOf()),
-    DayTimeLineEntity(3, LocalDate.now(), 1, listOf()),
-    DayTimeLineEntity(4, LocalDate.now(), 1, listOf()),
-    DayTimeLineEntity(5, LocalDate.now(), 1, listOf())
-)
 
 val travelEvents = listOf(
     TravelEventEntity(
@@ -238,3 +242,33 @@ val travelEvents = listOf(
         distance = "10m"
     )
 )
+
+@SuppressLint("NewApi")
+val days = listOf(
+    DayTimeLineEntity(1, LocalDate.of(2023, 1, 1), 1, travelEvents),
+    DayTimeLineEntity(2, LocalDate.of(2023, 1, 2), 1, listOf()),
+    DayTimeLineEntity(3, LocalDate.of(2023, 1, 3), 1, listOf()),
+    DayTimeLineEntity(4, LocalDate.of(2023, 1, 4), 1, listOf()),
+    DayTimeLineEntity(5, LocalDate.of(2023, 1, 5), 1, listOf())
+)
+
+@SuppressLint("NewApi")
+val itinerary = ItineraryEntity("Mumbai",
+    "Maharashtra",
+    "India",
+    LocalDate.of(2023, 1, 1),
+    LocalDate.of(2023, 1, 5),
+    generateMap(getDatesBetween(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 5)), days)
+)
+
+fun generateMap(listOfDate: List<LocalDate>, listOfEvents: List<DayTimeLineEntity>): Map<LocalDate, DayTimeLineEntity> {
+   return listOfDate.associateWith { date ->
+        listOfEvents.find { it.day == date } ?: DayTimeLineEntity(0, date, 0, listOf())
+    }
+}
+// generates a list of dates from start and end date
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+fun getDatesBetween(startDate: LocalDate, endDate: LocalDate): List<LocalDate> {
+    return startDate.datesUntil(endDate.plusDays(1)) // Adding 1 day to include the end date
+        .toList()
+}

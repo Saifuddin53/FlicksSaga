@@ -78,7 +78,7 @@ fun ItineraryDetailItem(itinerary: ItineraryEntity) {
                                     .size(18.dp)
                             )
                             Text(
-                                text = "${itinerary.days.size}-Day",
+                                text = "${itinerary.daysMap.keys.size}-Day",
                                 style = Typography.bodyMedium
                             )
                         }
@@ -164,8 +164,7 @@ fun ItineraryDetailItemPreview() {
             "India",
             LocalDate.of(2023, 1, 1),
             LocalDate.of(2023, 1, 3),
-            listOf(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 2), LocalDate.of(2023, 1, 3)),
-            listOf()
+            mapOf()
         )
     )
 }

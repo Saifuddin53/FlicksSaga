@@ -8,6 +8,5 @@ data class ItineraryEntity(
     val country: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val days: List<LocalDate>,
-    val dayTimeLine: List<DayTimeLineEntity>
+    val daysMap: Map<LocalDate, DayTimeLineEntity>
 )
