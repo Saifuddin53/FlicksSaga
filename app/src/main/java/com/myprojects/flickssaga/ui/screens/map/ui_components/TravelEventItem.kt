@@ -3,6 +3,7 @@ package com.myprojects.flickssaga.ui.screens.map.ui_components
 import android.content.Context
 import android.location.Geocoder
 import android.os.Build
+import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -48,19 +49,19 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.myprojects.flickssaga.DetailItem
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
 import com.myprojects.flickssaga.ui.theme.Typography
-import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -68,7 +69,10 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TravelEventItem(travelEvent: TravelEventEntity) {
+fun TravelEventItem(
+    travelEventEntity: TravelEventEntity,
+    navController: NavHostController,
+    ) {
     var columnHeightDp by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
@@ -88,7 +92,7 @@ fun TravelEventItem(travelEvent: TravelEventEntity) {
                     tint = Color(0xFF00A3FF),
                     modifier = Modifier.size(30.dp)
                 )
-                Text(text = travelEvent.id.toString(),
+                Text(text = travelEventEntity.id.toString(),
                     style = Typography.bodyMedium.copy(
                         fontWeight = FontWeight(500),
                         fontSize = 14.sp,
@@ -150,6 +154,9 @@ fun TravelEventItem(travelEvent: TravelEventEntity) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 4.dp, end = 8.dp)
+                .clickable {
+                    navController.navigate(DetailItem(travelEventEntity.id))
+                }
         ) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -178,7 +185,7 @@ fun TravelEventItem(travelEvent: TravelEventEntity) {
                             Icon(painter = painterResource(id = R.drawable.clock),
                                 contentDescription = "",
                                 tint = Color.Black)
-                            Text(text = "${formatTimestampToTime(travelEvent.startTimestamp)} - ${formatTimestampToTime(travelEvent.endTimestamp)}",
+                            Text(text = "${formatTimestampToTime(travelEventEntity.startTimestamp)} - ${formatTimestampToTime(travelEventEntity.endTimestamp)}",
                                 style = Typography.bodyMedium.copy(Color.Black),
                                 modifier = Modifier.padding(horizontal = 14.dp)
                             )
@@ -204,10 +211,10 @@ fun TravelEventItem(travelEvent: TravelEventEntity) {
                         ),
                         shape = RoundedCornerShape(24.dp),
                     ) {
-                        ImageScrollWithTextOverlay(travelEvent.imagesUrl)
+                        ImageScrollWithTextOverlay(travelEventEntity.imagesUrl)
                     }
                     //title
-                    Text(text = travelEvent.title,
+                    Text(text = travelEventEntity.title,
                         style = Typography.bodyLarge.copy(
                             fontWeight = FontWeight(600)
                         ),
@@ -254,7 +261,7 @@ fun TravelEventItem(travelEvent: TravelEventEntity) {
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = getAddressFromLocation(LocalContext.current, travelEvent.latitude, travelEvent.longitude) ?: "",
+                                text = getAddressFromLocation(LocalContext.current, travelEventEntity.latitude, travelEventEntity.longitude) ?: "",
                                 style = Typography.bodyMedium.copy(Color.Black),
                                 modifier = Modifier.padding(horizontal = 8.dp) // Adjust padding if needed
                             )
@@ -285,19 +292,19 @@ fun TravelEventItem(travelEvent: TravelEventEntity) {
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
-                items(travelEvent.tags) { tag ->
+                items(travelEventEntity.tags) { tag ->
                     TagItem(tag = tag)
                 }
             }
 
-            DirectionItem(distance = travelEvent.distance)
+            DirectionItem(distance = travelEventEntity.distance)
         }
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ImageScrollWithTextOverlay(images: List<String?>) {
+fun ImageScrollWithTextOverlay(images: List<String?>, modifier: Modifier = Modifier) {
     val pagerState = rememberPagerState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -323,7 +330,7 @@ fun ImageScrollWithTextOverlay(images: List<String?>) {
         // Show dots at the bottom center of the image
         if (images.size > 1) {
             Row(
-                modifier = Modifier
+                modifier = modifier
                     .align(Alignment.BottomCenter) // Align the row to the bottom center of the box
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.Center,
@@ -499,7 +506,7 @@ fun getAddressFromLocation(context: Context, latitude: Double, longitude: Double
 @Composable
 fun TravelEventItemPreview() {
     TravelEventItem(
-        travelEvent = TravelEventEntity(
+        travelEventEntity = TravelEventEntity(
             id = 1,
             title = "The GateWay of India",
             startTimestamp = 1,
@@ -509,6 +516,7 @@ fun TravelEventItemPreview() {
             longitude = 72.809998,
             tags = listOf("Review", "Review", "Restaurant"),
             distance = "10m"
-        )
+        ),
+        navController = NavHostController(LocalContext.current)
     )
 }

@@ -1,32 +1,22 @@
 package com.myprojects.flickssaga.ui.screens.map
 
 import android.annotation.SuppressLint
-import android.graphics.Paint.Align
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,18 +30,14 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
-import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.screens.map.models.DayTimeLineEntity
 import com.myprojects.flickssaga.ui.screens.map.models.ItineraryEntity
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
 import com.myprojects.flickssaga.ui.screens.map.ui_components.DayHorizontalScrollItem
-import com.myprojects.flickssaga.ui.screens.map.ui_components.DayHorizontalScrollItemPreview
 import com.myprojects.flickssaga.ui.screens.map.ui_components.NavigationItem
 import com.myprojects.flickssaga.ui.screens.map.ui_components.TimelineItineraryContent
 import com.myprojects.flickssaga.ui.screens.map.ui_components.TravelEventItem
@@ -78,14 +64,14 @@ fun DiscoverScreen(
         },
         bottomBar = { BottomNavigationBar(navController = navController) },
     ) { padding ->
-        TimelineScreen(modifier = Modifier.padding(padding))
+        TimelineScreen(modifier = Modifier.padding(padding), navController)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TimelineScreen(modifier: Modifier = Modifier) {
+fun TimelineScreen(modifier: Modifier = Modifier, navController: NavHostController) {
     var selectedItem by remember { mutableStateOf("itinerary") }
     var currentImgSize by remember { mutableStateOf(300f) }
     var currentImgAlpha by remember { mutableStateOf(1f) }
@@ -137,7 +123,7 @@ fun TimelineScreen(modifier: Modifier = Modifier) {
                     ) {
                         if(currentSelectedDate.value.travelEvents.isNotEmpty()) {
                             items(currentSelectedDate.value.travelEvents) {
-                                TravelEventItem(travelEvent = it)
+                                TravelEventItem(travelEventEntity = it, navController)
                             }
                         } else {
                             item {

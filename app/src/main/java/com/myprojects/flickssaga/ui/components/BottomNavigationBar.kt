@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.myprojects.flickssaga.R
+import com.myprojects.flickssaga.Screen
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 
 //
@@ -112,10 +113,3 @@ fun BottomNavigationBar(navController: NavHostController) {
 }
 
 
-sealed class Screen(val route: String, val title: String, val icon: Int) {
-    object Home : Screen("home", "Home", R.drawable.ic_home)
-    object Discover : Screen("discover", "Discover", R.drawable.discover)
-    object Upload : Screen("upload", "Upload", R.drawable.ic_upload)
-    object Marketplace : Screen("marketplace", "Market", R.drawable.shop)
-    object Flicks : Screen("flicks", "Flicks", R.drawable.ic_flicks)
-}
