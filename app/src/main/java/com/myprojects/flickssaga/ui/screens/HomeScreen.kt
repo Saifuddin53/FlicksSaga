@@ -95,6 +95,8 @@ import com.myprojects.flickssaga.ui.components.Drawer
 import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.components.UploadPost
 import com.myprojects.flickssaga.ui.components.strings
+import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
+import com.myprojects.flickssaga.ui.screens.map.ui_components.CardTravelEventItem
 import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
@@ -201,7 +203,8 @@ fun HomeScreen(navHostController: NavHostController) {
                         icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                         onClick = { showBottomSheet.value = true },
                         backgroundColor = Color.White,
-                        modifier = Modifier.padding(bottom = 50.dp)
+                        modifier = Modifier
+                            .padding(bottom = 50.dp)
                             .align(Alignment.TopStart)
                     )
                 },
@@ -241,7 +244,20 @@ fun HomeScreen(navHostController: NavHostController) {
 //                        AnimatedTextField(strings[0], { string -> })
 //                    }
 
-
+                    //Map card Item 
+                    CardTravelEventItem(
+                        travelEventEntity = TravelEventEntity(
+                            id = 1,
+                            title = "The GateWay of India",
+                            startTimestamp = 1,
+                            endTimestamp = 1,
+                            imagesUrl = listOf("https://media.istockphoto.com/id/1216024790/photo/gateway-of-india-mumbai.jpg?s=1024x1024&w=is&k=20&c=Lyssf-QyDWL18JRgNRXBlGLLvORaxcpq_QWct1kXKNA="),
+                            latitude = 18.910000,
+                            longitude = 72.809998,
+                            tags = listOf("Review", "Review", "Restaurant"),
+                            distance = "10m"
+                        ),
+                    )
                     // Check for drawer state
 /*
                     Column(
