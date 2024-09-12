@@ -55,7 +55,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .fillMaxHeight(0.4f),
+            .fillMaxHeight(0.35f),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xffF5F5F5)
@@ -110,7 +110,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                         Text(text = travelEventEntity.title,
                             style = Typography.bodyLarge.copy(
                                 fontWeight = FontWeight(600),
-                                fontSize = 16.sp,
+                                fontSize = 15.sp,
                                 letterSpacing = 1.sp,
                             ),
                             modifier = Modifier
@@ -148,7 +148,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                     Icon(
                         painter = painterResource(id = R.drawable.clock),
                         contentDescription = "",
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier.size(20.dp),
                         tint = Color.Black
                     )
                     Text(
@@ -157,7 +157,10 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                                 travelEventEntity.endTimestamp
                             )
                         }",
-                        style = Typography.bodyMedium.copy(Color.Black),
+                        style = Typography.bodyMedium.copy(
+                            color = Color.Black,
+                            fontSize = 11.sp
+                        ),
                         modifier = Modifier.padding(horizontal = 10.dp)
                     )
                 }
@@ -168,12 +171,15 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                     Icon(
                         painter = painterResource(id = R.drawable.location),
                         contentDescription = null,
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier.size(20.dp),
                         tint = Color.Black,
                     )
                     Text(
                         text = getAddressFromLocation(LocalContext.current, travelEventEntity.latitude, travelEventEntity.longitude) ?: "",
-                        style = Typography.bodyMedium.copy(Color.Black),
+                        style = Typography.bodyMedium.copy(
+                            color = Color.Black,
+                            fontSize = 11.sp
+                        ),
                         modifier = Modifier.padding(horizontal = 10.dp) // Adjust padding if needed
                     )
                 }
