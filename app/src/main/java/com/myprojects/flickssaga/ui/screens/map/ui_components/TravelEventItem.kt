@@ -356,14 +356,15 @@ fun ImageScrollWithTextOverlay(images: List<String?>, modifier: Modifier = Modif
 fun StarRatingBar(
     maxStars: Int = 5,
     rating: Float,
-    onRatingChanged: (Float) -> Unit
+    onRatingChanged: (Float) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current.density
     val starSize = (8f * density).dp
     val starSpacing = (0.5f * density).dp
 
     Row(
-        modifier = Modifier.selectableGroup(),
+        modifier = modifier.selectableGroup(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         for (i in 1..maxStars) {

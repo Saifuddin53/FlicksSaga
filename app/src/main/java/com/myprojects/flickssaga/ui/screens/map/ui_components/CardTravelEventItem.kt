@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +35,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -58,7 +60,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
             .fillMaxHeight(0.35f),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xffF5F5F5)
+            containerColor = Color(0xFFFFFDFD)
         )
     ) {
         var columnHeightDp by remember { mutableStateOf(0.dp) }
@@ -85,7 +87,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                     Card(
                         modifier = Modifier
                             .width(80.dp)
-                            .fillMaxHeight()
+                            .alignBy(FirstBaseline)  // Align based on the first baseline of the text
                             .padding(end = 8.dp, bottom = 8.dp)
                             .clickable { /* TODO */ },
                         colors = CardDefaults.cardColors(
@@ -103,11 +105,13 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                             contentScale = ContentScale.Crop
                         )
                     }
+
                     Column(
                         modifier = Modifier
-                            .fillMaxHeight(),
+                            .alignBy(FirstBaseline)  // Align this column by the same baseline
                     ) {
-                        Text(text = travelEventEntity.title,
+                        Text(
+                            text = travelEventEntity.title,
                             style = Typography.bodyLarge.copy(
                                 fontWeight = FontWeight(600),
                                 fontSize = 15.sp,
@@ -116,6 +120,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                             modifier = Modifier
                                 .padding(vertical = 8.dp)
                         )
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -129,14 +134,14 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                                     // Handle rating change
                                 }
                             )
-                            Text(text = "20,320 Reviews",
+                            Text(
+                                text = "20,320 Reviews",
                                 style = Typography.bodyMedium.copy(
                                     fontWeight = FontWeight(600),
                                     color = Color(0xff595959),
                                     fontSize = 10.sp
                                 ),
-                                modifier = Modifier
-                                    .align(Alignment.Bottom)
+                                modifier = Modifier.align(Alignment.Bottom)
                             )
                         }
                     }
@@ -183,31 +188,31 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                         modifier = Modifier.padding(horizontal = 10.dp) // Adjust padding if needed
                     )
                 }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xffF5F5F5)
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Direction ",
-                            style = Typography.bodyMedium.copy(
-                                fontWeight = FontWeight(500),
-                                color = Color(0xff00A3FF)
-                            ),
+                Box(modifier = Modifier.align(Alignment.End)) {
+                    Card(
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xffF5F5F5)
                         )
-                        Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_right_24),
-                            contentDescription = "",
-                            modifier = Modifier.size(16.dp),
-                            tint = Color(0xff00A3FF))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Direction ",
+                                style = Typography.bodyMedium.copy(
+                                    fontWeight = FontWeight(500),
+                                    color = Color(0xff00A3FF)
+                                ),
+                            )
+                            Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_right_24),
+                                contentDescription = "",
+                                modifier = Modifier.size(16.dp),
+                                tint = Color(0xff00A3FF))
+                        }
                     }
                 }
             }
