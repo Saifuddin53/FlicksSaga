@@ -245,19 +245,19 @@ fun HomeScreen(navHostController: NavHostController) {
 //                    }
 
                     //Map card Item 
-                    CardTravelEventItem(
-                        travelEventEntity = TravelEventEntity(
-                            id = 1,
-                            title = "The GateWay of India",
-                            startTimestamp = 1,
-                            endTimestamp = 1,
-                            imagesUrl = listOf("https://media.istockphoto.com/id/1216024790/photo/gateway-of-india-mumbai.jpg?s=1024x1024&w=is&k=20&c=Lyssf-QyDWL18JRgNRXBlGLLvORaxcpq_QWct1kXKNA="),
-                            latitude = 18.910000,
-                            longitude = 72.809998,
-                            tags = listOf("Review", "Review", "Restaurant"),
-                            distance = "10m"
-                        ),
-                    )
+//                    CardTravelEventItem(
+//                        travelEventEntity = TravelEventEntity(
+//                            id = 1,
+//                            title = "The GateWay of India",
+//                            startTimestamp = 1,
+//                            endTimestamp = 1,
+//                            imagesUrl = listOf("https://media.istockphoto.com/id/1216024790/photo/gateway-of-india-mumbai.jpg?s=1024x1024&w=is&k=20&c=Lyssf-QyDWL18JRgNRXBlGLLvORaxcpq_QWct1kXKNA="),
+//                            latitude = 18.910000,
+//                            longitude = 72.809998,
+//                            tags = listOf("Review", "Review", "Restaurant"),
+//                            distance = "10m"
+//                        ),
+//                    )
                     // Check for drawer state
 /*
                     Column(

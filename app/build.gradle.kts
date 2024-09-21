@@ -21,6 +21,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        resValue("string", "MAPS_API_KEY", project.hasProperty("MAPS_API_KEY").toString())
     }
 
     buildTypes {
@@ -51,7 +52,6 @@ android {
         }
     }
 }
-
 dependencies {
 
     implementation(libs.androidx.navigation.runtime.ktx)
@@ -90,6 +90,15 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
     implementation("com.google.firebase:firebase-auth-ktx:21.0.1")
+
+    // Map dependencies
+    implementation(libs.android.maps.compose)
+
+    // Street View metadata checks, etc.
+    implementation(libs.maps.compose.utils)
+
+    //include the widgets library for ScaleBar, etc.
+    implementation(libs.maps.compose.widgets)
 
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.3.0")

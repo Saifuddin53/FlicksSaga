@@ -23,6 +23,7 @@ import com.myprojects.flickssaga.ui.screens.HomeScreen
 import com.myprojects.flickssaga.ui.screens.UploadScreen
 import com.myprojects.flickssaga.ui.screens.map.DiscoverScreen
 import com.myprojects.flickssaga.ui.screens.map.TravelEventScreen
+import com.myprojects.flickssaga.ui.screens.map.map_impl.MapScreen
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
 import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
@@ -48,7 +49,10 @@ fun NavigationHost(
             composable(Screen.Flicks.route) { FlicksScreen(flickViewModel) }
             composable(DrawerItems.Questionnaire.route) { ChatScreen(navController) }
             composable(DrawerItems.YourActivity.route) { NotificationScreen() }
-            composable(Screen.Discover.route) { DiscoverScreen(navController) }
+            composable(Screen.Discover.route) {
+//                DiscoverScreen(navController)
+                MapScreen(navController)
+            }
             composable<DetailItem> {
                 val detailItem = it.toRoute<DetailItem>()
                 TravelEventScreen(

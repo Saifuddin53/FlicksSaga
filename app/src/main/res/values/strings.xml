@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">FlicksSaga</string>
+    <string name="canada_place">Canada</string>
+    <string name="government_office">Government Office</string>
+    <string name="art_gallery">Art Gallery\n</string>
+    <string name="edmonton">Edmonton</string>
+    <string name="ics_district">ICS district</string>
+    <string name="royal_alexandra_hospital">Royal Alexandra Hospital\n</string>
+    <string name="edmonton_expo_centre">Expp Centre</string>
+    <string name="nait_collage">College</string>
 </resources>
