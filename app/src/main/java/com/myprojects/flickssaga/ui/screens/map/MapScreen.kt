@@ -173,13 +173,23 @@ fun TopBar() {
 val travelEvents = listOf(
     TravelEventEntity(
         id = 1,
+        title = "Mumbai, Maharashtra",
+        startTimestamp = 1,
+        endTimestamp = 13241423143,
+        imagesUrl = listOf(
+            "https://www.holidify.com/images/cmsuploads/compressed/shutterstock_1073721995_20191213105915_20191213105938.jpg"
+        ),
+        latitude = 18.910000,
+        longitude = 72.809998,
+        tags = listOf("Review", "Review", "Restaurant"),
+        distance = "10m"
+    ),
+    TravelEventEntity(
+        id = 1,
         title = "The GateWay of India",
         startTimestamp = 1,
         endTimestamp = 999999999999999999,
-        imagesUrl = listOf("https://media.istockphoto.com/id/1307189136/photo/gateway-of-india-mumbai-maharashtra-monument-landmark-famous-place-magnificent-view-without.jpg?s=1024x1024&w=is&k=20&c=veWfug23i64lW0zEcxlX6tyRbrDIyDZYmF-GxqNOZls=",
-            "https://media.istockphoto.com/id/1307189136/photo/gateway-of-india-mumbai-maharashtra-monument-landmark-famous-place-magnificent-view-without.jpg?s=1024x1024&w=is&k=20&c=veWfug23i64lW0zEcxlX6tyRbrDIyDZYmF-GxqNOZls=",
-            "https://media.istockphoto.com/id/1307189136/photo/gateway-of-india-mumbai-maharashtra-monument-landmark-famous-place-magnificent-view-without.jpg?s=1024x1024&w=is&k=20&c=veWfug23i64lW0zEcxlX6tyRbrDIyDZYmF-GxqNOZls="
-        ),
+        imagesUrl = listOf("https://media.istockphoto.com/id/1154094384/photo/monsoon-clouds-over-the-india-gate.jpg?s=1024x1024&w=is&k=20&c=0gwnoZ4qUc-XS81Cf-ACaKVxnBCrjvnddMSpCcxvWKI="),
         latitude = 18.910000,
         longitude = 72.809998,
         tags = listOf("Review", "Review", "Restaurant", "Review", "Review", "Review"),

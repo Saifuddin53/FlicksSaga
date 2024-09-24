@@ -25,6 +25,7 @@ import com.myprojects.flickssaga.ui.screens.map.DiscoverScreen
 import com.myprojects.flickssaga.ui.screens.map.TravelEventScreen
 import com.myprojects.flickssaga.ui.screens.map.map_impl.MapScreen
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
+import com.myprojects.flickssaga.ui.screens.map.trip.TripScreen
 import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
 import kotlinx.serialization.Serializable
@@ -51,7 +52,8 @@ fun NavigationHost(
             composable(DrawerItems.YourActivity.route) { NotificationScreen() }
             composable(Screen.Discover.route) {
 //                DiscoverScreen(navController)
-                MapScreen(navController)
+//                MapScreen(navController)
+                TripScreen(navController)
             }
             composable<DetailItem> {
                 val detailItem = it.toRoute<DetailItem>()
