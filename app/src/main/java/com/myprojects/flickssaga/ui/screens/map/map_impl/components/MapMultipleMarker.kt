@@ -33,7 +33,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @OptIn(MapsComposeExperimentalApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun MapMultipleMarker(modifier: Modifier = Modifier) {
+fun MapMultipleMarker(
+    modifier: Modifier = Modifier,
+    onMarkerClick: (Int) -> Unit = {}
+) {
     val TeenDarwaja = LatLng(23.0154404, 72.5767402)
     val KankariaLake = LatLng(22.9786, 72.6031)
     val ManekChowk = LatLng(23.0271, 72.5895)
@@ -60,15 +63,27 @@ fun MapMultipleMarker(modifier: Modifier = Modifier) {
     ) {
         Marker(
             state = MarkerState(position = TeenDarwaja),
-            icon = customMarker(context = LocalContext.current, number = 1)
+            icon = customMarker(context = LocalContext.current, number = 1),
+            onClick = {
+                onMarkerClick(1)
+                true
+            }
         )
         Marker(
             state = MarkerState(position = KankariaLake),
-            icon = customMarker(context = LocalContext.current, number = 2)
+            icon = customMarker(context = LocalContext.current, number = 2),
+            onClick = {
+                onMarkerClick(2)
+                true
+            }
         )
         Marker(
             state = MarkerState(position = ManekChowk),
-            icon = customMarker(context = LocalContext.current, number = 3)
+            icon = customMarker(context = LocalContext.current, number = 3),
+            onClick = {
+                onMarkerClick(3)
+                true
+            }
         )
         Polyline(
             points = pathPoints,

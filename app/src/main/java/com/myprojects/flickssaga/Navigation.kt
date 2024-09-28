@@ -52,8 +52,8 @@ fun NavigationHost(
             composable(DrawerItems.YourActivity.route) { NotificationScreen() }
             composable(Screen.Discover.route) {
 //                DiscoverScreen(navController)
-//                MapScreen(navController)
-                TripScreen(navController)
+                MapScreen(navController)
+//                TripScreen(navController)
             }
             composable<DetailItem> {
                 val detailItem = it.toRoute<DetailItem>()

@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,9 +56,9 @@ import com.myprojects.flickssaga.ui.theme.Typography
 fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(300.dp)
             .padding(8.dp)
-            .fillMaxHeight(0.35f),
+            .fillMaxHeight(0.30f),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFFFFDFD)
@@ -75,7 +76,7 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp)
+                    .padding(start = 4.dp)
                     .onGloballyPositioned { layoutCoordinates ->
                         val heightPx = layoutCoordinates.size.height
                         columnHeightDp = with(density) { heightPx.toDp() }
@@ -86,9 +87,9 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                 ) {
                     Card(
                         modifier = Modifier
-                            .width(80.dp)
+                            .width(70.dp)
                             .alignBy(FirstBaseline)  // Align based on the first baseline of the text
-                            .padding(end = 8.dp, bottom = 8.dp)
+                            .padding(end = 8.dp, bottom = 6.dp)
                             .clickable { /* TODO */ },
                         colors = CardDefaults.cardColors(
                             containerColor = Color(0xFFffffff),
@@ -114,11 +115,12 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                             text = travelEventEntity.title,
                             style = Typography.bodyLarge.copy(
                                 fontWeight = FontWeight(600),
-                                fontSize = 15.sp,
+                                fontSize = 12.sp,
                                 letterSpacing = 1.sp,
+                                color = Color.Black
                             ),
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
+                                .padding(vertical = 4.dp)
                         )
 
                         Row(
@@ -132,14 +134,15 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                                 rating = 4.2f,
                                 onRatingChanged = {
                                     // Handle rating change
-                                }
+                                },
                             )
                             Text(
                                 text = "20,320 Reviews",
                                 style = Typography.bodyMedium.copy(
                                     fontWeight = FontWeight(600),
                                     color = Color(0xff595959),
-                                    fontSize = 10.sp
+                                    fontSize = 8.sp,
+                                    lineHeight = 8.sp
                                 ),
                                 modifier = Modifier.align(Alignment.Bottom)
                             )
@@ -183,36 +186,35 @@ fun CardTravelEventItem(travelEventEntity: TravelEventEntity) {
                         text = getAddressFromLocation(LocalContext.current, travelEventEntity.latitude, travelEventEntity.longitude) ?: "",
                         style = Typography.bodyMedium.copy(
                             color = Color.Black,
-                            fontSize = 11.sp
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp
                         ),
                         modifier = Modifier.padding(horizontal = 10.dp) // Adjust padding if needed
                     )
                 }
-                Box(modifier = Modifier.align(Alignment.End)) {
-                    Card(
-                        modifier = Modifier,
-                        shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xffF5F5F5)
-                        )
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(4.dp)
+                        .background(color = Color(0xFFF5F5F5), shape = RoundedCornerShape(6.dp))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 16.dp, bottom = 8.dp, top = 8.dp, end = 8.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Direction ",
-                                style = Typography.bodyMedium.copy(
-                                    fontWeight = FontWeight(500),
-                                    color = Color(0xff00A3FF)
-                                ),
-                            )
-                            Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_right_24),
-                                contentDescription = "",
-                                modifier = Modifier.size(16.dp),
-                                tint = Color(0xff00A3FF))
-                        }
+                        Text(text = "Direction ",
+                            style = Typography.bodyMedium.copy(
+                                fontWeight = FontWeight(500),
+                                color = Color(0xff00A3FF),
+                                fontSize = 10.sp
+                            ),
+                        )
+                        Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_right_24),
+                            contentDescription = "",
+                            modifier = Modifier.size(16.dp),
+                            tint = Color(0xff00A3FF))
                     }
                 }
             }

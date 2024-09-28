@@ -96,6 +96,7 @@ import com.myprojects.flickssaga.ui.components.TopBar
 import com.myprojects.flickssaga.ui.components.UploadPost
 import com.myprojects.flickssaga.ui.components.strings
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
+import com.myprojects.flickssaga.ui.screens.map.trip.components.RestaurantCard
 import com.myprojects.flickssaga.ui.screens.map.ui_components.CardTravelEventItem
 import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
@@ -258,6 +259,22 @@ fun HomeScreen(navHostController: NavHostController) {
 //                            distance = "10m"
 //                        ),
 //                    )
+
+                    RestaurantCard(
+                        travelEventEntity = TravelEventEntity(
+                            id = 1,
+                            title = "The GateWay of India",
+                            startTimestamp = 1,
+                            endTimestamp = 1,
+                            imagesUrl = listOf("https://thebombaycanteen.com/cdn/shop/files/TBC_BANNER_-_WEB.jpg?v=1722849058"),
+                            latitude = 18.910000,
+                            longitude = 72.809998,
+                            tags = listOf("Review", "Review", "Restaurant"),
+                            distance = "10m"
+                        ),
+                        modifier = Modifier.padding(16.dp)
+                    )
+
                     // Check for drawer state
 /*
                     Column(
