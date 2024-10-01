@@ -6,10 +6,14 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -20,6 +24,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PatternItem
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
@@ -30,22 +35,29 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
 
-@OptIn(MapsComposeExperimentalApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun MapMultipleMarker(
     modifier: Modifier = Modifier,
     onMarkerClick: (Int) -> Unit = {}
 ) {
-    val TeenDarwaja = LatLng(23.0154404, 72.5767402)
+    val context = LocalContext.current
+    val TeenDarwaja = LatLng(22.3251999, 72.6251225)
     val KankariaLake = LatLng(22.9786, 72.6031)
     val ManekChowk = LatLng(23.0271, 72.5895)
 
-    val pathPoints = listOf(
-        TeenDarwaja,
-        KankariaLake,
-        ManekChowk
-    )
+
+    var routePoints by remember { mutableStateOf<List<LatLng>>(emptyList()) }
+
+    // Fetch route and update state
+    FetchDirections(
+        origin = TeenDarwaja,
+        destination = ManekChowk,
+        waypoints = emptyList()
+    ) { route ->
+        Toast.makeText(context, "${route.size}", Toast.LENGTH_SHORT).show()
+        routePoints = route  // Update with the fetched route
+    }
 
     val builder = LatLngBounds.builder()
     builder.include(TeenDarwaja)
@@ -85,11 +97,13 @@ fun MapMultipleMarker(
                 true
             }
         )
-        Polyline(
-            points = pathPoints,
-            color = Color.Blue, // Path color
-            width = 5f, // Path width
-        )
+        if (routePoints.isNotEmpty()) {
+            Polyline(
+                points = routePoints,
+                color = Color.Blue,  // Path color
+                width = 5f           // Path width
+            )
+        }
     }
 }
 

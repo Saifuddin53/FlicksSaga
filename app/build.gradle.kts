@@ -81,10 +81,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-pager:0.26.2-beta")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.26.2-beta")
 
-
     implementation("commons-io:commons-io:2.11.0")
-
-
 
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-storage")
@@ -99,6 +96,10 @@ dependencies {
 
     //include the widgets library for ScaleBar, etc.
     implementation(libs.maps.compose.widgets)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.android.maps.utils)
 
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.3.0")
