@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -45,16 +44,20 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -67,7 +70,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -81,28 +83,22 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.request.ImageRequest
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.AppIconShare
 import com.myprojects.flickssaga.data.User
-import com.myprojects.flickssaga.ui.components.AiGeneratedTextField
-import com.myprojects.flickssaga.ui.components.AnimatedTextField
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.components.Drawer
+import com.myprojects.flickssaga.ui.components.HideFromBottomSheet
 import com.myprojects.flickssaga.ui.components.TopBar
-import com.myprojects.flickssaga.ui.components.UploadPost
-import com.myprojects.flickssaga.ui.components.strings
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
 import com.myprojects.flickssaga.ui.screens.map.trip.components.RestaurantCard
-import com.myprojects.flickssaga.ui.screens.map.ui_components.CardTravelEventItem
-import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import com.myprojects.flickssaga.viewmodels.VideoPostViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun HomeScreen(navHostController: NavHostController) {
@@ -119,6 +115,8 @@ fun HomeScreen(navHostController: NavHostController) {
     val videoPostViewModel: VideoPostViewModel = viewModel()
 
     var username = remember { mutableStateOf("") }
+
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
 
     val scaffoldOffset by animateDpAsState(
         targetValue = if (drawerState.value) 40.dp else 0.dp,
@@ -299,7 +297,9 @@ fun HomeScreen(navHostController: NavHostController) {
                         }
 */
 
-                        UploadPost(videoPostViewModel = videoPostViewModel, showBottomSheet = showBottomSheet)
+                        HideFromBottomSheet(showBottomSheet, sheetState)
+
+//                        UploadPost(videoPostViewModel = videoPostViewModel, showBottomSheet = showBottomSheet)
                     }
                 }
             }
