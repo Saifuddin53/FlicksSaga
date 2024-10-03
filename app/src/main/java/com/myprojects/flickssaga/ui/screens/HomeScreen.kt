@@ -116,7 +116,7 @@ fun HomeScreen(navHostController: NavHostController) {
 
     var username = remember { mutableStateOf("") }
 
-    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val scaffoldOffset by animateDpAsState(
         targetValue = if (drawerState.value) 40.dp else 0.dp,

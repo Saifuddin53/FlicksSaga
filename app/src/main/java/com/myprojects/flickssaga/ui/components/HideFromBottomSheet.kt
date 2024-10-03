@@ -1,44 +1,34 @@
 package com.myprojects.flickssaga.ui.components
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,12 +40,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.data.User
-import com.myprojects.flickssaga.ui.screens.userList
 import com.myprojects.flickssaga.ui.theme.Typography
 import com.myprojects.flickssaga.ui.theme.poppinsFontFamily
 import kotlinx.coroutines.launch
@@ -104,9 +94,9 @@ fun BottomSheetContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Hide me from",
+                text = "hide me from",
                 style = Typography.bodyMedium.copy(
-                    fontSize = 14.sp
+                    fontSize = 13.sp
                 ),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -124,7 +114,8 @@ fun BottomSheetContent(
                 .align(Alignment.BottomCenter)
                 .offset(y = 6.dp)
                 .fillMaxWidth()
-                .padding(vertical = 16.dp), // Adjust padding as needed
+                .padding(vertical = 16.dp)
+                .height(45.dp), // Adjust padding as needed
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color(0xff00A3FF)
             )
@@ -132,7 +123,8 @@ fun BottomSheetContent(
             Text(
                 text = "Done",
                 style = Typography.bodyMedium.copy(
-                    fontSize = 15.sp
+                    fontSize = 15.sp,
+                    color = Color.White
                 ),
             )
         }
@@ -152,7 +144,7 @@ fun SearchBar(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = Color(0xff898989),
                 modifier = Modifier.size(24.dp)
             )
         },
@@ -160,14 +152,17 @@ fun SearchBar(
             Text(
                 text = "Search your friend",
                 style = Typography.bodyMedium.copy(
-                    fontSize = 15.sp
+                    fontSize = 13.sp
                 ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = Color(0xff898989)
             )
         },
         singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
+        shape = RoundedCornerShape(4.dp),
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
     )
 }
 
@@ -192,8 +187,8 @@ fun UserGridView(
         columns = GridCells.Fixed(4), // 4 columns in the grid
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.dp) // Adjust height as necessary
-            .padding(top = 8.dp, bottom = 16.dp),
+            .height(350.dp)
+            .padding(top = 4.dp, bottom = 32.dp),
         contentPadding = PaddingValues(top = 8.dp),
     ) {
         items(filteredUsers.size) { index ->
@@ -209,7 +204,7 @@ fun UserItem(user: User, selected: MutableState<Boolean>) {
 
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(horizontal = 4.dp, vertical = 8.dp)
             .clickable {
                 selected.value = !selected.value
                 user.isSelected = !user.isSelected
@@ -231,7 +226,7 @@ fun UserItem(user: User, selected: MutableState<Boolean>) {
                 model = "https://plus.unsplash.com/premium_photo-1669882305273-674eff6567af?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHVzZXJ8ZW58MHx8MHx8fDA%3D",
                 contentDescription = null,
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(55.dp)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
@@ -241,7 +236,7 @@ fun UserItem(user: User, selected: MutableState<Boolean>) {
                     contentDescription = "",
                     tint = Color(0xff00a3ff),
                     modifier = Modifier
-                        .size(16.dp)
+                        .size(14.dp)
                         .align(Alignment.BottomEnd)
                 )
             }
@@ -250,11 +245,13 @@ fun UserItem(user: User, selected: MutableState<Boolean>) {
             text = user.username,
             style = TextStyle(
                 fontFamily = poppinsFontFamily,
-                fontSize = 14.sp
+                fontSize = 11.sp
             ),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 6.dp)
         )
     }
 }
@@ -264,25 +261,25 @@ val listOfUsers = listOf(
     User(
         id = 1,
         image = R.drawable.user,
-        username = "abc",
+        username = "Shivangi Sahu",
         email = "charleswfairbanks@myownpersonaldomain.com"
     ),
     User(
         id = 1,
         image = R.drawable.user,
-        username = "bcd",
+        username = "Harsh Rao",
         email = "charleswfairbanks@myownpersonaldomain.com"
     ),
     User(
         id = 1,
         image = R.drawable.user,
-        username = "efg",
+        username = "Anjali Saho",
         email = "charleswfairbanks@myownpersonaldomain.com"
     ),
     User(
         id = 1,
         image = R.drawable.user,
-        username = "hij",
+        username = "Tejas copilot",
         email = "charleswfairbanks@myownpersonaldomain.com"
     ),
     User(
