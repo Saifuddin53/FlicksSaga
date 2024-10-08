@@ -37,6 +37,7 @@ import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.screens.map.models.DayTimeLineEntity
 import com.myprojects.flickssaga.ui.screens.map.models.ItineraryEntity
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
+import com.myprojects.flickssaga.ui.screens.map.trip.ExploreSection
 import com.myprojects.flickssaga.ui.screens.map.ui_components.DayHorizontalScrollItem
 import com.myprojects.flickssaga.ui.screens.map.ui_components.NavigationItem
 import com.myprojects.flickssaga.ui.screens.map.ui_components.TimelineItineraryContent
@@ -135,7 +136,14 @@ fun TimelineScreen(modifier: Modifier = Modifier, navController: NavHostControll
                 }
             } else if (selectedItem == "explore") {
                 item {
-                    Text(text = "Explore")
+                    LazyColumn(
+                        modifier = Modifier.height(800.dp),
+                        userScrollEnabled = isScrollingBlocked
+                    ) {
+                        item {
+                            ExploreSection()
+                        }
+                    }
                 }
             }
         }
