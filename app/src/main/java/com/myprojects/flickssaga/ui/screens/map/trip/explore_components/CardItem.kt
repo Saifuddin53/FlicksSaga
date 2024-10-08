@@ -46,7 +46,7 @@ fun CardItem(
             }
             Box(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp, start = 20.dp, end = 20.dp)
                     .align(Alignment.BottomCenter)
             ) {
                 Text(
@@ -57,7 +57,7 @@ fun CardItem(
                     ),
                     maxLines = 2,
                     textAlign = TextAlign.Center,
-                    lineHeight = 8.sp
+                    lineHeight = 16.sp
                 )
             }
         }

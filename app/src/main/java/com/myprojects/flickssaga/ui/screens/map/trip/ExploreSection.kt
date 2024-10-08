@@ -182,11 +182,11 @@ val cardListTopSearch = listOf(
         title = "Vadapav"
     ),
     CategoryItemData(
-        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKzOKrpGhIDrArMBAmornbyeiUX6TEyALvtA&s",
+        image = "https://media.istockphoto.com/id/1471844577/photo/delicious-double-burger-with-french-fries-and-vegetables-on-wooden-cutting-board.jpg?s=1024x1024&w=is&k=20&c=Ogw96zOARKqnkTeLkiq0hOT96lSJKLOksG3tYjAm4Kw=",
         title = "Burger"
     ),
     CategoryItemData(
-        image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKzOKrpGhIDrArMBAmornbyeiUX6TEyALvtA&s",
+        image = "https://cdn.pixabay.com/photo/2014/06/18/16/02/pav-bhaji-371377_1280.jpg",
         title = "Pav Bhaji"
     ),
     CategoryItemData(
