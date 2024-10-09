@@ -25,6 +25,7 @@ import com.myprojects.flickssaga.ui.screens.map.DiscoverScreen
 import com.myprojects.flickssaga.ui.screens.map.TravelEventScreen
 import com.myprojects.flickssaga.ui.screens.map.map_impl.MapScreen
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
+import com.myprojects.flickssaga.ui.screens.map.trip.ExploreDetailScreen
 import com.myprojects.flickssaga.ui.screens.map.trip.TripScreen
 import com.myprojects.flickssaga.ui.screens.notifications.NotificationScreen
 import com.myprojects.flickssaga.viewmodels.FlickViewModel
@@ -55,6 +56,13 @@ fun NavigationHost(
 //                MapScreen(navController)
 //                TripScreen(navController)
             }
+            composable<ExploreDetailItem> {
+                val exploreDetailItem = it.toRoute<ExploreDetailItem>()
+                ExploreDetailScreen(
+                    title = exploreDetailItem.title,
+                    navController = navController
+                )
+            }
             composable<DetailItem> {
                 val detailItem = it.toRoute<DetailItem>()
                 TravelEventScreen(
@@ -70,6 +78,11 @@ fun NavigationHost(
 @Serializable
 data class DetailItem(
     val id: Int
+)
+
+@Serializable
+data class ExploreDetailItem(
+    val title: String
 )
 
 sealed class Screen(val route: String, val title: String, val icon: Int = 0) {

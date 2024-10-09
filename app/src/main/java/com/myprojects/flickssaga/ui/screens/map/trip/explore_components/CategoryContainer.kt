@@ -13,13 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.myprojects.flickssaga.ui.screens.map.trip.ExploreDetailScreen
 import com.myprojects.flickssaga.ui.theme.Typography
 
 @Composable
 fun CategoryContainer(
     title: String,
     cardList: List<CategoryItemData>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onItemClick: (CategoryItemData) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -44,7 +46,9 @@ fun CategoryContainer(
             )
         ) {
             items(cardList) { item ->
-                CardItem(item)
+                CardItem(category = item) {
+                    onItemClick(item)
+                }
             }
         }
     }

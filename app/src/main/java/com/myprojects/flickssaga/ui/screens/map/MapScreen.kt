@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.myprojects.flickssaga.ExploreDetailItem
 import com.myprojects.flickssaga.R
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.screens.map.models.DayTimeLineEntity
@@ -60,8 +61,6 @@ fun DiscoverScreen(
 //                },
 //                actions = { /* Any action buttons */ }
 //            )
-        },
-        floatingActionButton = {
         },
         bottomBar = { BottomNavigationBar(navController = navController) },
     ) { padding ->
@@ -141,7 +140,9 @@ fun TimelineScreen(modifier: Modifier = Modifier, navController: NavHostControll
                         userScrollEnabled = isScrollingBlocked
                     ) {
                         item {
-                            ExploreSection()
+                            ExploreSection {
+                                navController.navigate(ExploreDetailItem(it.title))
+                            }
                         }
                     }
                 }

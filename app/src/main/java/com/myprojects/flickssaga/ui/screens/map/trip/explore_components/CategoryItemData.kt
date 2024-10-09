@@ -11,3 +11,14 @@ data class CategoryTypeItemData(
     @DrawableRes val icon: Int,
     val type: String
 )
+
+data class FoodItemData(
+    val title: String,
+    val image: String,
+    val ratings: Double,
+    val locationLat: Double,
+    val locationLong: Double,
+    val item: String,
+    val price: Int,
+    val quantity: Int
+)

@@ -69,7 +69,6 @@ fun SharedTransitionScope.TravelEventScreen(
 ) {
     val travelEvent = days[0].travelEvents[id]
     Box(modifier = Modifier.fillMaxSize()) {
-
         Column(
             modifier = Modifier.fillMaxSize()
         ) {

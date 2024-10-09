@@ -33,7 +33,9 @@ import com.myprojects.flickssaga.ui.screens.map.trip.explore_components.Category
 import com.myprojects.flickssaga.ui.theme.Typography
 
 @Composable
-fun ExploreSection(modifier: Modifier = Modifier) {
+fun ExploreSection(
+    onItemClick: (CategoryItemData) -> Unit,
+) {
     Column(
         modifier = Modifier
             .height(1000.dp)
@@ -54,13 +56,17 @@ fun ExploreSection(modifier: Modifier = Modifier) {
             title = "Top searches",
             cardList = cardListTopSearch,
             modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        ) {
+            onItemClick(it)
+        }
 
         CategoryContainer(
             title = "Picture Related to \"Mumbai\"",
             cardList = cardList,
             modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        ) {
+            onItemClick(it)
+        }
     }
 }
 

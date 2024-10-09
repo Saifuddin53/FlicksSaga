@@ -1,5 +1,6 @@
 package com.myprojects.flickssaga.ui.screens.map.trip.explore_components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -23,13 +24,17 @@ import com.myprojects.flickssaga.ui.theme.Typography
 @Composable
 fun CardItem(
     category: CategoryItemData,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onItemClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
             .width(150.dp)
-            .height(180.dp),
-        shape = RoundedCornerShape(12.dp)
+            .height(180.dp)
+            .clickable {
+                onItemClick()
+            },
+        shape = RoundedCornerShape(8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -53,7 +58,7 @@ fun CardItem(
                     text = category.title,
                     style = Typography.bodyMedium.copy(
                         color = Color.White,
-                        fontSize = 14.sp
+                        fontSize = 13.sp
                     ),
                     maxLines = 2,
                     textAlign = TextAlign.Center,
