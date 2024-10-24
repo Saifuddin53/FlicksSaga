@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,7 @@ fun PersonDistanceBottomSheet(
     user: UserProfile,
     sheetState: SheetState,
     scope: CoroutineScope,
+    showBottomSheetState: MutableState<Boolean>
 ) {
     ModalBottomSheet(
         onDismissRequest = {},
@@ -60,6 +62,7 @@ fun PersonDistanceBottomSheet(
         ModalBottomSheetContent(
             user = user,
             onCancel = {
+                showBottomSheetState.value = false
                 scope.launch {
                     sheetState.hide()
                 }

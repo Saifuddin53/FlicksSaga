@@ -20,6 +20,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +49,7 @@ fun PersonDistanceCard(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
+    val showBottomSheetState = remember { mutableStateOf(false) }
 
     Surface(
         shape = RoundedCornerShape(12.dp),
@@ -77,6 +81,7 @@ fun PersonDistanceCard(
                     text = user.locationDetails.distance
                 )
                 ViewButton {
+                    showBottomSheetState.value = true
                     //show the bottom sheet
                     scope.launch {
                         sheetState.show()
@@ -85,11 +90,12 @@ fun PersonDistanceCard(
             }
         }
         
-        if(sheetState.isVisible) {
+        if(showBottomSheetState.value) {
             PersonDistanceBottomSheet(
                 user = user,
                 scope = scope,
-                sheetState = sheetState
+                sheetState = sheetState,
+                showBottomSheetState = showBottomSheetState
             )
         }
     }
