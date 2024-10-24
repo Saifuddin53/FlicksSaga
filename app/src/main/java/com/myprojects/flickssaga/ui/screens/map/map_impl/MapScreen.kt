@@ -3,7 +3,9 @@ package com.myprojects.flickssaga.ui.screens.map.map_impl
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -14,10 +16,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.myprojects.flickssaga.ui.components.BottomNavigationBar
 import com.myprojects.flickssaga.ui.screens.map.map_impl.components.MapMultipleMarker
+import com.myprojects.flickssaga.ui.screens.map.map_impl.components.PersonDistanceCard
+import com.myprojects.flickssaga.ui.screens.map.models.LocationDetails
 import com.myprojects.flickssaga.ui.screens.map.models.TravelEventEntity
+import com.myprojects.flickssaga.ui.screens.map.models.UserProfile
 import com.myprojects.flickssaga.ui.screens.map.ui_components.CardTravelEventItem
 import kotlinx.coroutines.launch
 
@@ -48,11 +54,16 @@ fun MapScreen(navController: NavHostController, modifier: Modifier = Modifier) {
 
             LazyRow(
                 state = listState,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(start = 16.dp),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp)
             ) {
-                items(travelEventsMap) {
-                    CardTravelEventItem(travelEventEntity = it)
+                items(userProfiles) { user ->
+                    PersonDistanceCard(
+                        user
+                    )
                 }
             }
         }
@@ -97,4 +108,52 @@ val travelEventsMap = listOf(
         distance = "10m"
     ),
 
+)
+
+val userProfiles = listOf(
+    UserProfile(
+        name = "Aniket",
+        username = "@aniket",
+        profilePictureUrl = "https://cdn.pixabay.com/photo/2013/07/13/10/44/man-157699_1280.png",
+        address = "Near Sai compex, K.V pendarkar college ,Dombivali, Maharastra, 421201",
+        locationDetails = LocationDetails(
+            locationName = "Ji.Raya Yeh Gangga",
+            distance = "200m",
+            travelTime = "5 min"
+        ),
+        sharedConnection = "Jay Rajput and you is the same group"
+    ),
+    UserProfile(
+        name = "Aniket",
+        username = "@aniket",
+        profilePictureUrl = "https://cdn.pixabay.com/photo/2013/07/13/10/44/man-157699_1280.png",
+        address = "Near Sai compex, K.V pendarkar college ,Dombivali, Maharastra, 421201",
+        locationDetails = LocationDetails(
+            locationName = "Ji.Raya Yeh Gangga",
+            distance = "200m",
+            travelTime = "5 min"
+        )
+    ),
+    UserProfile(
+        name = "Aniket",
+        username = "@aniket",
+        profilePictureUrl = "https://cdn.pixabay.com/photo/2013/07/13/10/44/man-157699_1280.png",
+        address = "Near Sai compex, K.V pendarkar college ,Dombivali, Maharastra, 421201",
+        locationDetails = LocationDetails(
+            locationName = "Ji.Raya Yeh Gangga",
+            distance = "200m",
+            travelTime = "5 min"
+        )
+    ),
+    UserProfile(
+        name = "Aniket",
+        username = "@aniket",
+        profilePictureUrl = "https://cdn.pixabay.com/photo/2013/07/13/10/44/man-157699_1280.png",
+        address = "Near Sai compex, K.V pendarkar college ,Dombivali, Maharastra, 421201",
+        locationDetails = LocationDetails(
+            locationName = "Ji.Raya Yeh Gangga",
+            distance = "200m",
+            travelTime = "5 min"
+        )
+    ),
 )

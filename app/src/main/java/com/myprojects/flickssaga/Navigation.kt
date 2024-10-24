@@ -52,8 +52,8 @@ fun NavigationHost(
             composable(DrawerItems.Questionnaire.route) { ChatScreen(navController) }
             composable(DrawerItems.YourActivity.route) { NotificationScreen() }
             composable(Screen.Discover.route) {
-                DiscoverScreen(navController)
-//                MapScreen(navController)
+//                DiscoverScreen(navController)
+                MapScreen(navController)
 //                TripScreen(navController)
             }
             composable<ExploreDetailItem> {
